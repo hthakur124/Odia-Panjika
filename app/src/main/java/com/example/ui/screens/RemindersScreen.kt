@@ -46,11 +46,11 @@ import com.example.data.CalendarReminder
 import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.PattachitraHeaderContainer
+import com.example.ui.theme.CreamBackground
 import com.example.ui.theme.CreamOutline
 import com.example.ui.theme.CreamSurface
 import com.example.ui.theme.InkPrimary
 import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.LocalOdiaColors
 import com.example.ui.theme.PureWhite
 import com.example.ui.theme.SaffronContainer
 import com.example.ui.theme.SaffronDeep
@@ -69,13 +69,12 @@ fun RemindersScreen(
     onDeleteReminder: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = LocalOdiaColors.current
     val reminders = uiState.reminders
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.creamBackground)
+            .background(CreamBackground)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             PattachitraHeaderContainer {

@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -61,16 +60,19 @@ import com.example.data.OdiaDayEntry
 import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.PattachitraHeaderContainer
+import com.example.ui.theme.CreamBackground
+import com.example.ui.theme.CreamOutline
+import com.example.ui.theme.CreamSurface
 import com.example.ui.theme.InkPrimary
 import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.LocalOdiaColors
-import com.example.ui.theme.LocalOdiaTextScale
 import com.example.ui.theme.PureWhite
 import com.example.ui.theme.SaffronContainer
 import com.example.ui.theme.SaffronGold
 import com.example.ui.theme.SaffronHighlight
 import com.example.ui.theme.TempleTeal
 import com.example.ui.theme.TempleTealSoft
+import com.example.ui.theme.VermilionRed
+import com.example.ui.theme.VermilionSoft
 
 @Composable
 fun CalendarScreen(
@@ -82,16 +84,15 @@ fun CalendarScreen(
     onAddReminderForDate: (CalendarDate, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = LocalOdiaColors.current
     val remindersByDate = uiState.remindersByDate
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.creamBackground),
-        contentPadding = PaddingValues(bottom = 22.dp)
+            .background(CreamBackground),
+        contentPadding = PaddingValues(bottom = 20.dp)
     ) {
-        // 1. Compact Curved Theme Header
+        // 1. Compact Curved Maroon Header (reduced top/bottom gaps so more content fits on screen)
         item {
             CalendarHeritageHeader(
                 currentYear = uiState.currentYear,
@@ -102,12 +103,12 @@ fun CalendarScreen(
             )
         }
 
-        // 2. Traditional Odia Calendar Grid: Weekdays Vertically on Left + Big Square Date Tiles
+        // 2. Square-Style Colorful Calendar Grid with compact spacing
         item {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 10.dp, vertical = 8.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
@@ -116,7 +117,7 @@ fun CalendarScreen(
                         .widthIn(max = 680.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    VerticalWeekdayMonthGrid(
+                    ReferenceStyleMonthGrid(
                         year = uiState.currentYear,
                         month = uiState.currentMonth,
                         selectedDate = uiState.selectedDate,
@@ -125,13 +126,15 @@ fun CalendarScreen(
                         onDateTapped = onDateTapped
                     )
 
+                    // Compact Color Legend
                     CalendarColorLegend()
 
-                    // Upcoming Festivals Section Heading ("ଆଗାମୀ ପର୍ବ")
+                    // Upcoming / Month Festivals Section Title ("ଆଗାମୀ ପର୍ବ")
                     Text(
                         text = stringResource(R.string.section_upcoming_festivals),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = colors.primaryAccent,
+                        fontSize = 21.sp,
+                        color = VermilionRed,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(top = 2.dp, start = 2.dp)
                     )
@@ -139,20 +142,20 @@ fun CalendarScreen(
             }
         }
 
-        // 3. Upcoming Festivals List — Holidays highlighted in Red, others in Teal
+        // 3. Upcoming Festivals List — Holidays styled in Red, regular festivals in Teal
         val monthFestivals = uiState.currentMonthFestivals
         if (monthFestivals.isEmpty()) {
             item {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp),
+                        .padding(horizontal = 12.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Surface(
-                        shape = RoundedCornerShape(14.dp),
-                        color = colors.cardSurface,
-                        border = BorderStroke(1.dp, colors.outline),
+                        shape = RoundedCornerShape(16.dp),
+                        color = CreamSurface,
+                        border = BorderStroke(1.dp, CreamOutline),
                         modifier = Modifier
                             .fillMaxWidth()
                             .widthIn(max = 680.dp)
@@ -175,7 +178,7 @@ fun CalendarScreen(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                        .padding(horizontal = 12.dp, vertical = 4.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     UpcomingFestivalCard(
@@ -201,7 +204,6 @@ private fun CalendarHeritageHeader(
     onNextMonth: () -> Unit,
     onSelectMonth: (Int) -> Unit
 ) {
-    val textScale = LocalOdiaTextScale.current
     val monthRowState = rememberLazyListState()
     LaunchedEffect(currentMonth) {
         monthRowState.animateScrollToItem((currentMonth - 1).coerceIn(0, 11))
@@ -224,22 +226,25 @@ private fun CalendarHeritageHeader(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = OdiaFormatting.sakabdaSamvatLine(currentYear, currentMonth),
-                        fontSize = (13f * textScale).coerceAtMost(17f).sp,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontSize = 13.sp,
                         color = SaffronHighlight,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = "${OdiaFormatting.monthNameOdia(currentMonth)} ${OdiaFormatting.toOdiaDigits(currentYear)}",
-                        fontSize = (28f * textScale).coerceAtMost(36f).sp,
-                        lineHeight = (34f * textScale).coerceAtMost(42f).sp,
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontSize = 30.sp,
+                        lineHeight = 36.sp,
                         color = PureWhite,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.testTag("calendar_month_title")
                     )
                     Text(
                         text = OdiaFormatting.odiaSolarSpan(currentMonth),
-                        fontSize = (14f * textScale).coerceAtMost(18f).sp,
-                        color = PureWhite.copy(alpha = 0.94f),
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontSize = 14.sp,
+                        color = PureWhite.copy(alpha = 0.92f),
                         fontWeight = FontWeight.SemiBold
                     )
                 }
@@ -280,6 +285,7 @@ private fun CalendarHeritageHeader(
 
             Spacer(modifier = Modifier.height(8.dp))
 
+            // Compact Scrollable Month Pills
             LazyRow(
                 state = monthRowState,
                 contentPadding = PaddingValues(horizontal = 14.dp),
@@ -301,7 +307,8 @@ private fun CalendarHeritageHeader(
                     ) {
                         Text(
                             text = odiaMonth,
-                            fontSize = (13f * textScale).coerceAtMost(17f).sp,
+                            style = MaterialTheme.typography.labelLarge,
+                            fontSize = 13.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isSelected) InkPrimary else PureWhite,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
@@ -313,13 +320,8 @@ private fun CalendarHeritageHeader(
     }
 }
 
-/**
- * Authentic Traditional Odia Wall Panjika Layout:
- * 7 weekday rows (ରବି to ଶନି) stacked VERTICALLY on the left side,
- * with 5 or 6 week columns of big, easy-to-read square date tiles extending to the right!
- */
 @Composable
-private fun VerticalWeekdayMonthGrid(
+private fun ReferenceStyleMonthGrid(
     year: Int,
     month: Int,
     selectedDate: CalendarDate,
@@ -327,12 +329,10 @@ private fun VerticalWeekdayMonthGrid(
     reminderDateKeys: Set<String>,
     onDateTapped: (CalendarDate) -> Unit
 ) {
-    val colors = LocalOdiaColors.current
-    val textScale = LocalOdiaTextScale.current
-
     val firstDayOffset = CalendarDate.firstWeekdayOffsetSundayStart(year, month)
     val daysInMonth = CalendarDate.daysInMonth(year, month)
-    val numWeeks = ((firstDayOffset + daysInMonth) + 6) / 7 // Always 5 or 6 columns
+    val totalCells = ((firstDayOffset + daysInMonth + 6) / 7) * 7
+    val weeks = totalCells / 7
 
     Column(
         modifier = Modifier
@@ -340,66 +340,59 @@ private fun VerticalWeekdayMonthGrid(
             .testTag("calendar_month_grid_card"),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
-        // 7 vertical weekday rows: 0 = ରବି (Sunday) .. 6 = ଶନି (Saturday)
-        for (weekdayRow in 0 until 7) {
-            val isSundayRow = weekdayRow == 0
-            val odiaDayName = OdiaFormatting.weekdayHeadersOdia[weekdayRow]
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Left-Side Vertical Weekday Label Tile (Square-proportioned pill)
+        // Bold Maroon Weekday Row
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            OdiaFormatting.weekdayHeadersOdia.forEach { odiaDay ->
                 Box(
-                    modifier = Modifier
-                        .width(62.dp)
-                        .height(54.dp)
-                        .clip(RoundedCornerShape(8.dp))
-                        .background(
-                            if (isSundayRow) colors.holidayRed else colors.primarySoft
-                        )
-                        .border(
-                            width = 1.dp,
-                            color = if (isSundayRow) colors.holidayRed else colors.primaryAccent.copy(alpha = 0.25f),
-                            shape = RoundedCornerShape(8.dp)
-                        ),
+                    modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = odiaDayName,
-                        fontSize = (16f * textScale).coerceAtMost(20f).sp,
+                        text = odiaDay,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = if (isSundayRow) PureWhite else colors.primaryAccent,
-                        maxLines = 1
+                        color = VermilionRed
                     )
                 }
+            }
+        }
 
-                // 5 or 6 Week Columns of Big Square Date Tiles
-                for (weekCol in 0 until numWeeks) {
-                    val dayNum = weekCol * 7 + weekdayRow - firstDayOffset + 1
+        // Crisp Square-Style Date Tiles
+        for (week in 0 until weeks) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
+                for (col in 0 until 7) {
+                    val cellIndex = week * 7 + col
+                    val dayNum = cellIndex - firstDayOffset + 1
                     if (dayNum in 1..daysInMonth) {
                         val cellDate = CalendarDate(year, month, dayNum)
                         val entry = entriesByKey[cellDate.isoKey]
                         val isSelected = cellDate == selectedDate
+                        val isSunday = col == 0
                         val hasReminder = reminderDateKeys.contains(cellDate.isoKey)
 
                         CalendarSquareDayTile(
                             date = cellDate,
                             entry = entry,
-                            isSunday = isSundayRow,
+                            isSunday = isSunday,
                             isSelected = isSelected,
                             hasReminder = hasReminder,
                             onClick = { onDateTapped(cellDate) },
                             modifier = Modifier.weight(1f)
                         )
                     } else {
-                        Box(
+                        Spacer(
                             modifier = Modifier
                                 .weight(1f)
                                 .aspectRatio(1f)
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(colors.cardSurface.copy(alpha = 0.35f))
                         )
                     }
                 }
@@ -418,22 +411,19 @@ private fun CalendarSquareDayTile(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = LocalOdiaColors.current
-    val textScale = LocalOdiaTextScale.current
-
     val isFullMaroonHoliday = entry?.isFullMaroonHoliday == true
     val isFullSaffronFestival = entry?.isFullSaffronFestival == true
 
     val targetBg = when {
-        isFullMaroonHoliday -> colors.holidayRed
-        isFullSaffronFestival -> colors.festivalSaffron
-        else -> colors.cardSurface
+        isFullMaroonHoliday -> VermilionRed
+        isFullSaffronFestival -> SaffronGold
+        else -> CreamSurface
     }
     val animatedBg by animateColorAsState(targetValue = targetBg, label = "square_tile_bg")
 
     val numeralColor = when {
         isFullMaroonHoliday -> PureWhite
-        isSunday -> colors.holidayRed
+        isSunday -> VermilionRed
         else -> InkPrimary
     }
 
@@ -443,6 +433,7 @@ private fun CalendarSquareDayTile(
         label = "square_tile_scale"
     )
 
+    // Crisp square tile styling (1:1 aspect ratio with refined 8.dp corners)
     val squareShape = RoundedCornerShape(8.dp)
 
     Box(
@@ -459,9 +450,9 @@ private fun CalendarSquareDayTile(
             .background(animatedBg)
             .then(
                 if (isSelected) {
-                    Modifier.border(BorderStroke(2.5.dp, colors.secondaryAccent), squareShape)
+                    Modifier.border(BorderStroke(2.5.dp, TempleTeal), squareShape)
                 } else if (!isFullMaroonHoliday && !isFullSaffronFestival) {
-                    Modifier.border(BorderStroke(0.8.dp, colors.outline), squareShape)
+                    Modifier.border(BorderStroke(0.7.dp, CreamOutline.copy(alpha = 0.75f)), squareShape)
                 } else {
                     Modifier
                 }
@@ -470,21 +461,20 @@ private fun CalendarSquareDayTile(
             .testTag("calendar_day_${date.isoKey}"),
         contentAlignment = Alignment.Center
     ) {
-        // Extra-large, bold, crystal-clear Odia numeral scaled by user text setting
         Text(
             text = OdiaFormatting.toOdiaDigits(date.day),
-            fontSize = (23f * textScale).coerceAtMost(31f).sp,
+            style = MaterialTheme.typography.titleLarge,
+            fontSize = 21.sp,
             fontWeight = FontWeight.Bold,
-            color = numeralColor,
-            maxLines = 1
+            color = numeralColor
         )
 
         if (isFullMaroonHoliday && entry?.hasFestival == true) {
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .padding(bottom = 3.dp)
-                    .size(5.dp)
+                    .padding(bottom = 4.dp)
+                    .size(4.5.dp)
                     .clip(CircleShape)
                     .background(SaffronHighlight)
             )
@@ -494,7 +484,7 @@ private fun CalendarSquareDayTile(
             Box(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
-                    .padding(top = 3.dp, end = 3.dp)
+                    .padding(top = 4.dp, end = 4.dp)
                     .size(7.dp)
                     .clip(CircleShape)
                     .background(if (isFullMaroonHoliday) SaffronGold else TempleTeal)
@@ -505,11 +495,10 @@ private fun CalendarSquareDayTile(
 
 @Composable
 private fun CalendarColorLegend() {
-    val colors = LocalOdiaColors.current
     Surface(
         shape = RoundedCornerShape(12.dp),
-        color = colors.cardSurface,
-        border = BorderStroke(1.dp, colors.outline),
+        color = CreamSurface,
+        border = BorderStroke(1.dp, CreamOutline),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -519,9 +508,9 @@ private fun CalendarColorLegend() {
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            LegendSwatch(bgColor = colors.holidayRed, label = stringResource(R.string.legend_holiday))
-            LegendSwatch(bgColor = colors.festivalSaffron, label = stringResource(R.string.legend_festival))
-            LegendTextSwatch(textColor = colors.holidayRed, label = stringResource(R.string.legend_sunday))
+            LegendSwatch(bgColor = VermilionRed, label = stringResource(R.string.legend_holiday))
+            LegendSwatch(bgColor = SaffronGold, label = stringResource(R.string.legend_festival))
+            LegendTextSwatch(textColor = VermilionRed, label = stringResource(R.string.legend_sunday))
             LegendSwatch(bgColor = TempleTeal, label = stringResource(R.string.legend_reminder))
         }
     }
@@ -550,7 +539,6 @@ private fun LegendSwatch(bgColor: Color, label: String) {
 
 @Composable
 private fun LegendTextSwatch(textColor: Color, label: String) {
-    val colors = LocalOdiaColors.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)
@@ -559,7 +547,7 @@ private fun LegendTextSwatch(textColor: Color, label: String) {
             modifier = Modifier
                 .size(11.dp)
                 .clip(RoundedCornerShape(3.dp))
-                .background(colors.cardSurface)
+                .background(CreamSurface)
                 .border(1.5.dp, textColor, RoundedCornerShape(3.dp))
         )
         Text(
@@ -571,6 +559,11 @@ private fun LegendTextSwatch(textColor: Color, label: String) {
     }
 }
 
+/**
+ * Upcoming Festival Card ("ଆଗାମୀ ପର୍ବ"):
+ * - Holidays are prominently styled in Red (full maroon/red square date badge + red holiday title/tag)
+ * - Non-holiday festivals feature the vibrant Teal square date badge
+ */
 @Composable
 private fun UpcomingFestivalCard(
     entry: OdiaDayEntry,
@@ -579,17 +572,16 @@ private fun UpcomingFestivalCard(
     onReminderClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = LocalOdiaColors.current
     val isHolidayItem = entry.isFullMaroonHoliday || entry.isHoliday
 
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = if (isHolidayItem) colors.holidaySoft.copy(alpha = 0.55f) else colors.cardSurface,
+        color = if (isHolidayItem) VermilionSoft.copy(alpha = 0.5f) else CreamSurface,
         shadowElevation = 1.5.dp,
         border = BorderStroke(
             width = if (isHolidayItem) 1.3.dp else 1.dp,
-            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.55f) else colors.outline
+            color = if (isHolidayItem) VermilionRed.copy(alpha = 0.5f) else CreamOutline.copy(alpha = 0.75f)
         ),
         modifier = modifier.testTag("month_festival_card_${entry.date.isoKey}")
     ) {
@@ -600,17 +592,18 @@ private fun UpcomingFestivalCard(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            // Square Date Badge: Red for Holidays, Teal for other festivals
+            // Square Date Badge: Red for Holidays, Teal for regular festivals
             Box(
                 modifier = Modifier
                     .size(54.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(if (isHolidayItem) colors.holidayRed else TempleTeal),
+                    .background(if (isHolidayItem) VermilionRed else TempleTeal),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = OdiaFormatting.toOdiaDigits(entry.date.day),
                     style = MaterialTheme.typography.headlineSmall,
+                    fontSize = 23.sp,
                     fontWeight = FontWeight.Bold,
                     color = PureWhite
                 )
@@ -627,14 +620,15 @@ private fun UpcomingFestivalCard(
                     Text(
                         text = entry.festival,
                         style = MaterialTheme.typography.titleMedium,
-                        color = if (isHolidayItem) colors.holidayRed else InkPrimary,
+                        fontSize = 18.sp,
+                        color = if (isHolidayItem) VermilionRed else InkPrimary,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.weight(1f, fill = false)
                     )
                     if (isHolidayItem) {
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = colors.holidayRed
+                            color = VermilionRed
                         ) {
                             Text(
                                 text = "ଛୁଟି",
@@ -649,7 +643,8 @@ private fun UpcomingFestivalCard(
                 Text(
                     text = "${OdiaFormatting.fullWeekdayOdia(entry.date.dayOfWeek)} • ${entry.tithi}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.85f) else InkSecondary,
+                    fontSize = 14.sp,
+                    color = if (isHolidayItem) VermilionRed.copy(alpha = 0.85f) else InkSecondary,
                     fontWeight = FontWeight.SemiBold
                 )
             }
@@ -669,7 +664,7 @@ private fun UpcomingFestivalCard(
                         Icons.Rounded.NotificationsNone
                     },
                     contentDescription = stringResource(R.string.cd_add_reminder),
-                    tint = if (hasReminder) colors.holidayRed else TempleTeal,
+                    tint = if (hasReminder) VermilionRed else TempleTeal,
                     modifier = Modifier.size(23.dp)
                 )
             }

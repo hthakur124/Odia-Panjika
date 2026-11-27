@@ -6,25 +6,9 @@
     <string name="nav_calendar">କ୍ୟାଲେଣ୍ଡର</string>
     <string name="nav_festivals">ପର୍ବପର୍ବାଣୀ</string>
     <string name="nav_reminders">ରିମାଇଣ୍ଡର</string>
-    <string name="nav_settings">ସେଟିଂସ୍</string>
+    <string name="nav_about">ବିଷୟରେ</string>
 
-    <!-- Settings & About Calendar -->
-    <string name="settings_title">ସେଟିଂସ୍</string>
-    <string name="settings_subtitle">ଅକ୍ଷର, ରଙ୍ଗ ଓ ପଞ୍ଜିକା ବିଷୟରେ</string>
-    <string name="settings_text_size_title">ଅକ୍ଷର ଆକାର (Text Size)</string>
-    <string name="settings_text_normal">ସାଧାରଣ</string>
-    <string name="settings_text_large">ବଡ଼</string>
-    <string name="settings_text_extra_large">ଅତି ବଡ଼</string>
-    <string name="settings_theme_color_title">ରଙ୍ଗ ପରିବର୍ତ୍ତନ (Theme Color)</string>
-    <string name="settings_about_card_title">ଓଡ଼ିଆ ପଞ୍ଜିକା ବିଷୟରେ</string>
-    <string name="settings_about_card_subtitle">ଓଡ଼ିଶା, ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା ଓ ଛୁଟିଦିନ</string>
-    <string name="settings_contact_title">ଯୋଗାଯୋଗ (Contact Us)</string>
-    <string name="settings_contact_email">odiaechoes@gmail.com</string>
-    <string name="btn_send_email">ଇମେଲ୍ ପଠାନ୍ତୁ</string>
-    <string name="btn_copy_email">କପି କରନ୍ତୁ</string>
-    <string name="email_copied_feedback">ଇମେଲ୍ କପି ହେଲା: odiaechoes@gmail.com</string>
-    <string name="cd_navigate_back">Go back</string>
-
+    <!-- About Calendar screen -->
     <string name="about_title">ଓଡ଼ିଆ ପଞ୍ଜିକା ବିଷୟରେ</string>
     <string name="about_subtitle">ଓଡ଼ିଶା ଓ ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା</string>
     <string name="btn_view_all_holidays">ସବୁ ଛୁଟିଦିନ ଦେଖନ୍ତୁ</string>

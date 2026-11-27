@@ -54,11 +54,11 @@ import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.LunarPhaseDot
 import com.example.ui.components.PattachitraHeaderContainer
+import com.example.ui.theme.CreamBackground
 import com.example.ui.theme.CreamOutline
 import com.example.ui.theme.CreamSurface
 import com.example.ui.theme.InkPrimary
 import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.LocalOdiaColors
 import com.example.ui.theme.PureWhite
 import com.example.ui.theme.SaffronContainer
 import com.example.ui.theme.SaffronDeep
@@ -79,14 +79,13 @@ fun FestivalsScreen(
     onAddReminder: (CalendarDate, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val colors = LocalOdiaColors.current
     val filtered = uiState.filteredFestivals
     val reminderDates = uiState.remindersByDate.keys
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.creamBackground)
+            .background(CreamBackground)
     ) {
         PattachitraHeaderContainer {
             Column(
@@ -154,7 +153,7 @@ fun FestivalsScreen(
                         Icon(
                             imageVector = Icons.Rounded.Search,
                             contentDescription = null,
-                            tint = colors.primaryAccent
+                            tint = VermilionRed
                         )
                     },
                     trailingIcon = {
@@ -176,7 +175,7 @@ fun FestivalsScreen(
                     colors = OutlinedTextFieldDefaults.colors(
                         focusedContainerColor = CreamSurface,
                         unfocusedContainerColor = CreamSurface,
-                        focusedBorderColor = colors.primaryAccent,
+                        focusedBorderColor = VermilionRed,
                         unfocusedBorderColor = CreamOutline
                     ),
                     modifier = Modifier

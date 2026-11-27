@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Celebration
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Notifications
-import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Celebration
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.NotificationsActive
-import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,12 +50,12 @@ import com.example.ui.screens.AboutCalendarScreen
 import com.example.ui.screens.CalendarScreen
 import com.example.ui.screens.FestivalsScreen
 import com.example.ui.screens.RemindersScreen
-import com.example.ui.screens.SettingsScreen
+import com.example.ui.theme.CreamBackground
+import com.example.ui.theme.CreamSurface
 import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.LocalOdiaColors
-import com.example.ui.theme.OdiaCalendarTheme
 import com.example.ui.theme.SaffronContainer
 import com.example.ui.theme.TempleTeal
+import com.example.ui.theme.VermilionRed
 
 enum class OdiaTab(
     val routeId: String,
@@ -81,11 +81,11 @@ enum class OdiaTab(
         selectedIcon = Icons.Rounded.NotificationsActive,
         unselectedIcon = Icons.Outlined.Notifications
     ),
-    SETTINGS(
-        routeId = "settings",
-        labelRes = R.string.nav_settings,
-        selectedIcon = Icons.Rounded.Settings,
-        unselectedIcon = Icons.Outlined.Settings
+    ABOUT(
+        routeId = "about",
+        labelRes = R.string.nav_about,
+        selectedIcon = Icons.Rounded.Info,
+        unselectedIcon = Icons.Outlined.Info
     )
 }
 
@@ -94,46 +94,15 @@ fun OdiaCalendarApp(
     viewModel: OdiaCalendarViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-
-    OdiaCalendarTheme(
-        palette = uiState.themePalette,
-        textSizeOption = uiState.textSizeOption
-    ) {
-        OdiaCalendarShell(
-            uiState = uiState,
-            viewModel = viewModel
-        )
-    }
-}
-
-@Composable
-private fun OdiaCalendarShell(
-    uiState: OdiaCalendarUiState,
-    viewModel: OdiaCalendarViewModel
-) {
-    val colors = LocalOdiaColors.current
     var activeTab by rememberSaveable { mutableStateOf(OdiaTab.CALENDAR) }
-    var showAboutUnderSettings by rememberSaveable { mutableStateOf(false) }
 
-    BackHandler(enabled = showAboutUnderSettings || activeTab != OdiaTab.CALENDAR) {
-        if (showAboutUnderSettings) {
-            showAboutUnderSettings = false
-        } else {
-            activeTab = OdiaTab.CALENDAR
-        }
+    BackHandler(enabled = activeTab != OdiaTab.CALENDAR) {
+        activeTab = OdiaTab.CALENDAR
     }
 
     val openHolidaysList: () -> Unit = {
-        showAboutUnderSettings = false
         viewModel.selectFestivalFilter(FestivalFilter.HOLIDAYS)
         activeTab = OdiaTab.FESTIVALS
-    }
-
-    val onSelectTab: (OdiaTab) -> Unit = { tab ->
-        if (tab != OdiaTab.SETTINGS) {
-            showAboutUnderSettings = false
-        }
-        activeTab = tab
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -142,14 +111,14 @@ private fun OdiaCalendarShell(
         if (useNavigationRail) {
             Row(modifier = Modifier.fillMaxSize()) {
                 NavigationRail(
-                    containerColor = colors.cardSurface,
+                    containerColor = CreamSurface,
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     OdiaTab.entries.forEach { tab ->
                         val selected = activeTab == tab
                         NavigationRailItem(
                             selected = selected,
-                            onClick = { onSelectTab(tab) },
+                            onClick = { activeTab = tab },
                             icon = {
                                 Icon(
                                     imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
@@ -159,13 +128,13 @@ private fun OdiaCalendarShell(
                             label = {
                                 Text(
                                     text = stringResource(tab.labelRes),
-                                    style = MaterialTheme.typography.labelSmall,
+                                    style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold
                                 )
                             },
                             colors = NavigationRailItemDefaults.colors(
-                                selectedIconColor = colors.primaryAccent,
-                                selectedTextColor = colors.primaryAccent,
+                                selectedIconColor = VermilionRed,
+                                selectedTextColor = VermilionRed,
                                 indicatorColor = SaffronContainer,
                                 unselectedIconColor = InkSecondary,
                                 unselectedTextColor = InkSecondary
@@ -178,29 +147,26 @@ private fun OdiaCalendarShell(
                 Box(modifier = Modifier.weight(1f)) {
                     OdiaTabContent(
                         activeTab = activeTab,
-                        showAboutUnderSettings = showAboutUnderSettings,
                         uiState = uiState,
                         viewModel = viewModel,
-                        onOpenAbout = { showAboutUnderSettings = true },
-                        onCloseAbout = { showAboutUnderSettings = false },
                         onOpenHolidaysList = openHolidaysList
                     )
                 }
             }
         } else {
             Scaffold(
-                containerColor = colors.creamBackground,
+                containerColor = CreamBackground,
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 bottomBar = {
                     NavigationBar(
-                        containerColor = colors.cardSurface,
+                        containerColor = CreamSurface,
                         tonalElevation = 4.dp
                     ) {
                         OdiaTab.entries.forEach { tab ->
                             val selected = activeTab == tab
                             NavigationBarItem(
                                 selected = selected,
-                                onClick = { onSelectTab(tab) },
+                                onClick = { activeTab = tab },
                                 icon = {
                                     Icon(
                                         imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
@@ -211,13 +177,12 @@ private fun OdiaCalendarShell(
                                     Text(
                                         text = stringResource(tab.labelRes),
                                         style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold,
-                                        maxLines = 1
+                                        fontWeight = FontWeight.Bold
                                     )
                                 },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = colors.primaryAccent,
-                                    selectedTextColor = colors.primaryAccent,
+                                    selectedIconColor = VermilionRed,
+                                    selectedTextColor = VermilionRed,
                                     indicatorColor = SaffronContainer,
                                     unselectedIconColor = InkSecondary,
                                     unselectedTextColor = InkSecondary
@@ -230,11 +195,8 @@ private fun OdiaCalendarShell(
             ) { innerPadding ->
                 OdiaTabContent(
                     activeTab = activeTab,
-                    showAboutUnderSettings = showAboutUnderSettings,
                     uiState = uiState,
                     viewModel = viewModel,
-                    onOpenAbout = { showAboutUnderSettings = true },
-                    onCloseAbout = { showAboutUnderSettings = false },
                     onOpenHolidaysList = openHolidaysList,
                     modifier = Modifier.padding(innerPadding)
                 )
@@ -284,11 +246,8 @@ private fun OdiaCalendarShell(
 @Composable
 private fun OdiaTabContent(
     activeTab: OdiaTab,
-    showAboutUnderSettings: Boolean,
     uiState: OdiaCalendarUiState,
     viewModel: OdiaCalendarViewModel,
-    onOpenAbout: () -> Unit,
-    onCloseAbout: () -> Unit,
     onOpenHolidaysList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -336,23 +295,10 @@ private fun OdiaTabContent(
             modifier = modifier
         )
 
-        OdiaTab.SETTINGS -> {
-            if (showAboutUnderSettings) {
-                AboutCalendarScreen(
-                    uiState = uiState,
-                    onBack = onCloseAbout,
-                    onOpenHolidaysList = onOpenHolidaysList,
-                    modifier = modifier
-                )
-            } else {
-                SettingsScreen(
-                    uiState = uiState,
-                    onSelectTextSize = viewModel::setTextSizeOption,
-                    onSelectThemePalette = viewModel::setThemePalette,
-                    onOpenAboutCalendar = onOpenAbout,
-                    modifier = modifier
-                )
-            }
-        }
+        OdiaTab.ABOUT -> AboutCalendarScreen(
+            uiState = uiState,
+            onOpenHolidaysList = onOpenHolidaysList,
+            modifier = modifier
+        )
     }
 }

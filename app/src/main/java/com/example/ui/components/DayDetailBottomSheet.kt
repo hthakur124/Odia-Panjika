@@ -92,12 +92,11 @@ fun DayDetailBottomSheet(
     onDeleteReminder: (String) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val colors = com.example.ui.theme.LocalOdiaColors.current
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = colors.creamBackground,
+        containerColor = CreamBackground,
         contentColor = InkPrimary,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         modifier = Modifier.testTag("day_detail_bottom_sheet")
@@ -111,7 +110,7 @@ fun DayDetailBottomSheet(
                 .padding(bottom = 26.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // 1. Bold Theme Date Hero Banner
+            // 1. Bold Maroon Date Hero Banner
             DayHeroBanner(
                 date = date,
                 entry = entry,
@@ -154,7 +153,6 @@ private fun DayHeroBanner(
     onNextDay: () -> Unit,
     onDismiss: () -> Unit
 ) {
-    val colors = com.example.ui.theme.LocalOdiaColors.current
     val isHoliday = entry?.let { it.isFullMaroonHoliday || it.isSunday } ?: false
     val odiaWeekday = OdiaFormatting.fullWeekdayOdia(date.dayOfWeek)
     val englishWeekday = entry?.weekdayEnglish?.ifBlank { null } ?: ""
@@ -169,7 +167,7 @@ private fun DayHeroBanner(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(colors.headerStart, colors.headerEnd)
+                        colors = listOf(VermilionDark, VermilionRed)
                     )
                 )
                 .padding(16.dp)

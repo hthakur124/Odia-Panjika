@@ -39,15 +39,14 @@ fun PattachitraHeaderContainer(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val paletteColors = com.example.ui.theme.LocalOdiaColors.current
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            .clip(RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp))
             .drawBehind {
                 drawRect(
                     brush = Brush.verticalGradient(
-                        colors = listOf(paletteColors.headerStart, paletteColors.headerEnd)
+                        colors = listOf(VermilionDark, VermilionRed)
                     )
                 )
 

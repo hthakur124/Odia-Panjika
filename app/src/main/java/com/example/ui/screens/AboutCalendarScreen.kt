@@ -1,6 +1,5 @@
 package com.example.ui.screens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.AutoAwesome
@@ -31,7 +29,6 @@ import androidx.compose.material.icons.rounded.WbSunny
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,74 +47,58 @@ import com.example.R
 import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.PattachitraHeaderContainer
+import com.example.ui.theme.CreamBackground
 import com.example.ui.theme.CreamOutline
 import com.example.ui.theme.CreamSurface
 import com.example.ui.theme.InkPrimary
 import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.LocalOdiaColors
 import com.example.ui.theme.PureWhite
 import com.example.ui.theme.SaffronContainer
+import com.example.ui.theme.SaffronDeep
 import com.example.ui.theme.SaffronGold
 import com.example.ui.theme.SaffronHighlight
 import com.example.ui.theme.TempleTeal
+import com.example.ui.theme.TempleTealContainer
 import com.example.ui.theme.TempleTealDark
+import com.example.ui.theme.TempleTealSoft
 import com.example.ui.theme.VermilionRed
 import com.example.ui.theme.VermilionSoft
 
 @Composable
 fun AboutCalendarScreen(
     uiState: OdiaCalendarUiState,
-    onBack: () -> Unit,
     onOpenHolidaysList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BackHandler(onBack = onBack)
-    val colors = LocalOdiaColors.current
     val totalHolidays = uiState.allEntries.count { it.isFullMaroonHoliday || it.isSunday }
     val totalFestivals = uiState.allEntries.count { it.hasFestival }
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(colors.creamBackground),
+            .background(CreamBackground),
         contentPadding = PaddingValues(bottom = 28.dp)
     ) {
         item {
             PattachitraHeaderContainer {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .padding(horizontal = 10.dp, vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .padding(horizontal = 18.dp, vertical = 14.dp)
                 ) {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .size(48.dp)
-                            .testTag("about_back_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
-                            contentDescription = stringResource(R.string.cd_navigate_back),
-                            tint = PureWhite
-                        )
-                    }
-                    Column {
-                        Text(
-                            text = stringResource(R.string.about_title),
-                            style = MaterialTheme.typography.headlineMedium,
-                            color = PureWhite,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            text = stringResource(R.string.about_subtitle),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = SaffronHighlight,
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
+                    Text(
+                        text = stringResource(R.string.about_title),
+                        style = MaterialTheme.typography.headlineMedium,
+                        color = PureWhite,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.about_subtitle),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = SaffronHighlight,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
             }
         }
