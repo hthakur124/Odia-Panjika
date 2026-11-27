@@ -21,18 +21,14 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Clear
 import androidx.compose.material.icons.rounded.EventNote
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.NotificationsNone
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -44,6 +40,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
@@ -59,7 +56,6 @@ import com.example.ui.theme.LocalOdiaColors
 @Composable
 fun FestivalsScreen(
     uiState: OdiaCalendarUiState,
-    onSearchQueryChange: (String) -> Unit,
     onFilterSelected: (FestivalFilter) -> Unit,
     onEntryTapped: (CalendarDate) -> Unit,
     onAddReminder: (CalendarDate, String) -> Unit,
@@ -126,50 +122,7 @@ fun FestivalsScreen(
                     .fillMaxSize()
                     .widthIn(max = 680.dp)
             ) {
-                OutlinedTextField(
-                    value = uiState.festivalSearchQuery,
-                    onValueChange = onSearchQueryChange,
-                    placeholder = {
-                        Text(
-                            text = stringResource(R.string.search_festivals_placeholder),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = colors.inkSecondary
-                        )
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Rounded.Search,
-                            contentDescription = null,
-                            tint = colors.primary
-                        )
-                    },
-                    trailingIcon = {
-                        if (uiState.festivalSearchQuery.isNotEmpty()) {
-                            IconButton(
-                                onClick = { onSearchQueryChange("") },
-                                modifier = Modifier.testTag("clear_festival_search_button")
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Clear,
-                                    contentDescription = stringResource(R.string.cd_clear_search),
-                                    tint = colors.inkSecondary
-                                )
-                            }
-                        }
-                    },
-                    singleLine = true,
-                    shape = RoundedCornerShape(18.dp),
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = colors.surface,
-                        unfocusedContainerColor = colors.surface,
-                        focusedBorderColor = colors.primary,
-                        unfocusedBorderColor = colors.outline
-                    ),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 14.dp, vertical = 12.dp)
-                        .testTag("festival_search_input")
-                )
+                Spacer(modifier = Modifier.height(10.dp))
 
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = 14.dp),
@@ -282,10 +235,10 @@ private fun FestivalDirectoryCard(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = if (isHolidayItem) colors.holidaySoft.copy(alpha = 0.5f) else colors.surface,
+        color = colors.surface,
         border = BorderStroke(
-            width = if (isHolidayItem) 1.3.dp else 1.dp,
-            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.5f) else colors.outline
+            width = if (isHolidayItem) 1.2.dp else 1.dp,
+            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.45f) else colors.outline
         ),
         shadowElevation = 1.5.dp,
         modifier = Modifier
@@ -341,16 +294,21 @@ private fun FestivalDirectoryCard(
                     Text(
                         text = entry.festival.ifBlank { stringResource(R.string.label_holiday_badge) },
                         style = MaterialTheme.typography.titleMedium,
-                        fontSize = 18.sp,
+                        fontSize = 16.sp,
                         color = if (isHolidayItem) colors.holidayRed else colors.inkPrimary,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
                 Text(
                     text = "${OdiaFormatting.fullWeekdayOdia(entry.date.dayOfWeek)} • ${entry.tithi}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.85f) else colors.inkSecondary
+                    fontSize = 13.5.sp,
+                    color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.85f) else colors.inkSecondary,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
 
                 Row(

@@ -1,8 +1,12 @@
 package com.example.ui
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,6 +22,7 @@ import androidx.compose.material.icons.rounded.Celebration
 import androidx.compose.material.icons.rounded.NotificationsActive
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -36,13 +41,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.R
+import com.example.ads.AdMobBannerAd
+import com.example.ads.AdMobManager
 import com.example.data.FestivalFilter
 import com.example.ui.components.AddReminderDialog
 import com.example.ui.components.DayDetailBottomSheet
@@ -108,6 +117,9 @@ private fun OdiaCalendarScaffoldContent(
     viewModel: OdiaCalendarViewModel
 ) {
     val colors = LocalOdiaColors.current
+    val context = LocalContext.current
+    val canRequestAds by AdMobManager.canRequestAds.collectAsStateWithLifecycle()
+    val isPrivacyOptionsRequired by AdMobManager.isPrivacyOptionsRequired.collectAsStateWithLifecycle()
     var activeTab by rememberSaveable { mutableStateOf(OdiaTab.CALENDAR) }
 
     BackHandler(enabled = activeTab != OdiaTab.CALENDAR) {
@@ -117,6 +129,12 @@ private fun OdiaCalendarScaffoldContent(
     val openHolidaysList: () -> Unit = {
         viewModel.selectFestivalFilter(FestivalFilter.HOLIDAYS)
         activeTab = OdiaTab.FESTIVALS
+    }
+
+    val openAdPrivacySettings: () -> Unit = {
+        context.findActivity()?.let { activity ->
+            AdMobManager.showPrivacyOptionsForm(activity)
+        }
     }
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
@@ -158,13 +176,18 @@ private fun OdiaCalendarScaffoldContent(
                     }
                 }
 
-                Box(modifier = Modifier.weight(1f)) {
-                    OdiaTabContent(
-                        activeTab = activeTab,
-                        uiState = uiState,
-                        viewModel = viewModel,
-                        onOpenHolidaysList = openHolidaysList
-                    )
+                Column(modifier = Modifier.weight(1f)) {
+                    Box(modifier = Modifier.weight(1f)) {
+                        OdiaTabContent(
+                            activeTab = activeTab,
+                            uiState = uiState,
+                            viewModel = viewModel,
+                            onOpenHolidaysList = openHolidaysList,
+                            isPrivacyOptionsRequired = isPrivacyOptionsRequired,
+                            onOpenAdPrivacySettings = openAdPrivacySettings
+                        )
+                    }
+                    AdMobBannerAd(canRequestAds = canRequestAds)
                 }
             }
         } else {
@@ -172,37 +195,49 @@ private fun OdiaCalendarScaffoldContent(
                 containerColor = colors.background,
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 bottomBar = {
-                    NavigationBar(
-                        containerColor = colors.surface,
-                        tonalElevation = 4.dp
-                    ) {
-                        OdiaTab.entries.forEach { tab ->
-                            val selected = activeTab == tab
-                            NavigationBarItem(
-                                selected = selected,
-                                onClick = { activeTab = tab },
-                                icon = {
-                                    Icon(
-                                        imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
-                                        contentDescription = stringResource(tab.labelRes)
-                                    )
-                                },
-                                label = {
-                                    Text(
-                                        text = stringResource(tab.labelRes),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                },
-                                colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = colors.primary,
-                                    selectedTextColor = colors.primary,
-                                    indicatorColor = colors.accentContainer,
-                                    unselectedIconColor = colors.inkSecondary,
-                                    unselectedTextColor = colors.inkSecondary
-                                ),
-                                modifier = Modifier.testTag("nav_bar_${tab.routeId}")
+                    Column {
+                        AdMobBannerAd(canRequestAds = canRequestAds)
+                        if (canRequestAds) {
+                            HorizontalDivider(
+                                color = colors.outline.copy(alpha = 0.6f),
+                                thickness = 0.8.dp
                             )
+                        }
+                        NavigationBar(
+                            containerColor = colors.surface,
+                            tonalElevation = 4.dp
+                        ) {
+                            OdiaTab.entries.forEach { tab ->
+                                val selected = activeTab == tab
+                                NavigationBarItem(
+                                    selected = selected,
+                                    onClick = { activeTab = tab },
+                                    icon = {
+                                        Icon(
+                                            imageVector = if (selected) tab.selectedIcon else tab.unselectedIcon,
+                                            contentDescription = stringResource(tab.labelRes)
+                                        )
+                                    },
+                                    label = {
+                                        Text(
+                                            text = stringResource(tab.labelRes),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            maxLines = 1,
+                                            softWrap = false,
+                                            overflow = TextOverflow.Ellipsis
+                                        )
+                                    },
+                                    colors = NavigationBarItemDefaults.colors(
+                                        selectedIconColor = colors.primary,
+                                        selectedTextColor = colors.primary,
+                                        indicatorColor = colors.accentContainer,
+                                        unselectedIconColor = colors.inkSecondary,
+                                        unselectedTextColor = colors.inkSecondary
+                                    ),
+                                    modifier = Modifier.testTag("nav_bar_${tab.routeId}")
+                                )
+                            }
                         }
                     }
                 }
@@ -212,6 +247,8 @@ private fun OdiaCalendarScaffoldContent(
                     uiState = uiState,
                     viewModel = viewModel,
                     onOpenHolidaysList = openHolidaysList,
+                    isPrivacyOptionsRequired = isPrivacyOptionsRequired,
+                    onOpenAdPrivacySettings = openAdPrivacySettings,
                     modifier = Modifier.padding(innerPadding)
                 )
             }
@@ -261,6 +298,8 @@ private fun OdiaTabContent(
     uiState: OdiaCalendarUiState,
     viewModel: OdiaCalendarViewModel,
     onOpenHolidaysList: () -> Unit,
+    isPrivacyOptionsRequired: Boolean,
+    onOpenAdPrivacySettings: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalOdiaColors.current
@@ -287,7 +326,6 @@ private fun OdiaTabContent(
 
         OdiaTab.FESTIVALS -> FestivalsScreen(
             uiState = uiState,
-            onSearchQueryChange = viewModel::updateFestivalSearch,
             onFilterSelected = viewModel::selectFestivalFilter,
             onEntryTapped = viewModel::onDateTapped,
             onAddReminder = viewModel::openAddReminder,
@@ -313,7 +351,15 @@ private fun OdiaTabContent(
             onSelectTextSize = viewModel::selectTextSize,
             onSelectThemePalette = viewModel::selectThemePalette,
             onOpenHolidaysList = onOpenHolidaysList,
+            isPrivacyOptionsRequired = isPrivacyOptionsRequired,
+            onOpenAdPrivacySettings = onOpenAdPrivacySettings,
             modifier = modifier
         )
     }
+}
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }

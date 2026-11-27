@@ -20,6 +20,12 @@
     <string name="settings_contact_title">ସମ୍ପର୍କ ଓ ସହାୟତା • Contact</string>
     <string name="settings_contact_email">odiapanjika.help@gmail.com</string>
     <string name="email_copied_feedback">ଇମେଲ୍ କପି ହେଲା • Email copied</string>
+    <string name="settings_privacy_title">ଗୋପନୀୟତା ନୀତି • Privacy Policy</string>
+    <string name="settings_privacy_subtitle">ବିଜ୍ଞାପନ ଓ ତଥ୍ୟ ସୁରକ୍ଷା ସୂଚନା</string>
+    <string name="btn_view_privacy_policy">View Privacy Policy</string>
+    <string name="btn_ad_privacy_options">Ad Privacy Settings</string>
+    <string name="btn_google_ads_policy">Google Ads Privacy Policy</string>
+    <string name="btn_close">Close</string>
 
     <string name="about_title">ଓଡ଼ିଆ ପଞ୍ଜିକା ବିଷୟରେ</string>
     <string name="about_subtitle">ଓଡ଼ିଶା ଓ ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା</string>
@@ -72,8 +78,8 @@
     <string name="reminders_title">ମୋ ରିମାଇଣ୍ଡର</string>
     <string name="reminders_subtitle">ପର୍ବ ଓ ବିଶେଷ ଦିନ ପାଇଁ ସ୍ମାରକ</string>
     <string name="btn_add_reminder">ରିମାଇଣ୍ଡର ଯୋଡ଼ନ୍ତୁ</string>
-    <string name="btn_save_reminder">ସେଭ୍ କରନ୍ତୁ</string>
-    <string name="btn_cancel">ବାତିଲ୍</string>
+    <string name="btn_save_reminder">Save</string>
+    <string name="btn_cancel">Cancel</string>
     <string name="reminder_title_label">ରିମାଇଣ୍ଡର ଶୀର୍ଷକ (Title)</string>
     <string name="reminder_title_placeholder">ଯଥା: ମକର ସଂକ୍ରାନ୍ତି ପୂଜା</string>
     <string name="reminder_note_label">ଟିପ୍ପଣୀ (Optional Note)</string>

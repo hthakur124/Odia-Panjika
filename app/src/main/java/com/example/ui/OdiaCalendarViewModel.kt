@@ -29,9 +29,9 @@ data class OdiaCalendarUiState(
     val isLoading: Boolean = true,
     val allEntries: List<OdiaDayEntry> = emptyList(),
     val entriesByKey: Map<String, OdiaDayEntry> = emptyMap(),
-    val currentYear: Int = 2027,
-    val currentMonth: Int = 1,
-    val selectedDate: CalendarDate = CalendarDate(2027, 1, 14),
+    val currentYear: Int = CalendarDate.today().year,
+    val currentMonth: Int = CalendarDate.today().month,
+    val selectedDate: CalendarDate = CalendarDate.today(),
     val showDayDetailSheet: Boolean = false,
     val festivalSearchQuery: String = "",
     val selectedFestivalFilter: FestivalFilter = FestivalFilter.ALL,
@@ -101,20 +101,14 @@ class OdiaCalendarViewModel(application: Application) : AndroidViewModel(applica
             val entries = repository.loadCalendarEntries()
             val byKey = entries.associateBy { it.date.isoKey }
             val today = CalendarDate.today()
-            val initialDate = when {
-                byKey.containsKey(today.isoKey) -> today
-                byKey.containsKey("2027-01-14") -> CalendarDate(2027, 1, 14)
-                entries.isNotEmpty() -> entries.first().date
-                else -> CalendarDate(2027, 1, 1)
-            }
             _uiState.update {
                 it.copy(
                     isLoading = false,
                     allEntries = entries,
                     entriesByKey = byKey,
-                    currentYear = initialDate.year,
-                    currentMonth = initialDate.month,
-                    selectedDate = initialDate
+                    currentYear = today.year,
+                    currentMonth = today.month,
+                    selectedDate = today
                 )
             }
         }
@@ -155,29 +149,42 @@ class OdiaCalendarViewModel(application: Application) : AndroidViewModel(applica
         }
     }
 
-    fun selectMonth(month: Int) {
+    fun selectMonth(month: Int, yearOverride: Int? = null) {
         val clamped = month.coerceIn(1, 12)
-        val year = _uiState.value.currentYear
-        val firstFestival = _uiState.value.allEntries.firstOrNull {
-            it.date.year == year && it.date.month == clamped && it.hasFestival
-        }?.date ?: CalendarDate(year, clamped, 1)
+        val year = yearOverride ?: _uiState.value.currentYear
+        val today = CalendarDate.today()
+        val targetDate = when {
+            today.year == year && today.month == clamped -> today
+            else -> _uiState.value.allEntries.firstOrNull {
+                it.date.year == year && it.date.month == clamped && it.hasFestival
+            }?.date ?: CalendarDate(year, clamped, 1)
+        }
 
         _uiState.update {
             it.copy(
+                currentYear = year,
                 currentMonth = clamped,
-                selectedDate = firstFestival
+                selectedDate = targetDate
             )
         }
     }
 
     fun previousMonth() {
-        val current = _uiState.value.currentMonth
-        selectMonth(if (current > 1) current - 1 else 12)
+        val state = _uiState.value
+        if (state.currentMonth > 1) {
+            selectMonth(state.currentMonth - 1, state.currentYear)
+        } else {
+            selectMonth(12, state.currentYear - 1)
+        }
     }
 
     fun nextMonth() {
-        val current = _uiState.value.currentMonth
-        selectMonth(if (current < 12) current + 1 else 1)
+        val state = _uiState.value
+        if (state.currentMonth < 12) {
+            selectMonth(state.currentMonth + 1, state.currentYear)
+        } else {
+            selectMonth(1, state.currentYear + 1)
+        }
     }
 
     fun onDateTapped(date: CalendarDate) {
@@ -196,16 +203,13 @@ class OdiaCalendarViewModel(application: Application) : AndroidViewModel(applica
     }
 
     fun navigateDetailDay(deltaDays: Int) {
-        val state = _uiState.value
-        val target = state.selectedDate.plusDays(deltaDays)
-        if (state.entriesByKey.containsKey(target.isoKey)) {
-            _uiState.update {
-                it.copy(
-                    currentYear = target.year,
-                    currentMonth = target.month,
-                    selectedDate = target
-                )
-            }
+        val target = _uiState.value.selectedDate.plusDays(deltaDays)
+        _uiState.update {
+            it.copy(
+                currentYear = target.year,
+                currentMonth = target.month,
+                selectedDate = target
+            )
         }
     }
 

@@ -111,24 +111,25 @@ fun LunarPhaseDot(
 
 @Composable
 fun SolarHorizonArc(
+    arcHeightDp: Dp = 32.dp,
     modifier: Modifier = Modifier
 ) {
     val colors = LocalOdiaColors.current
     Canvas(
         modifier = modifier
             .fillMaxWidth()
-            .height(44.dp)
+            .height(arcHeightDp)
     ) {
-        val paddingX = 16.dp.toPx()
-        val horizonY = size.height - 8.dp.toPx()
+        val paddingX = 14.dp.toPx()
+        val horizonY = size.height - 6.dp.toPx()
         val arcWidth = (size.width - paddingX * 2f).coerceAtLeast(10f)
-        val arcHeight = (size.height - 14.dp.toPx()) * 2f
+        val arcHeight = (size.height - 10.dp.toPx()).coerceAtLeast(8f) * 2f
 
         drawLine(
             color = colors.outline,
             start = Offset(paddingX - 6.dp.toPx(), horizonY),
             end = Offset(size.width - paddingX + 6.dp.toPx(), horizonY),
-            strokeWidth = 1.4.dp.toPx(),
+            strokeWidth = 1.2.dp.toPx(),
             cap = StrokeCap.Round
         )
 
@@ -141,22 +142,22 @@ fun SolarHorizonArc(
             useCenter = false,
             topLeft = Offset(paddingX, horizonY - arcHeight / 2f),
             size = Size(arcWidth, arcHeight),
-            style = Stroke(width = 3.dp.toPx(), cap = StrokeCap.Round)
+            style = Stroke(width = 2.6.dp.toPx(), cap = StrokeCap.Round)
         )
 
         drawCircle(
             color = colors.accent,
-            radius = 5.5.dp.toPx(),
+            radius = 4.5.dp.toPx(),
             center = Offset(paddingX, horizonY)
         )
         drawCircle(
             color = colors.accentHighlight,
-            radius = 4.dp.toPx(),
+            radius = 3.5.dp.toPx(),
             center = Offset(size.width / 2f, horizonY - arcHeight / 2f)
         )
         drawCircle(
             color = colors.primary,
-            radius = 5.5.dp.toPx(),
+            radius = 4.5.dp.toPx(),
             center = Offset(size.width - paddingX, horizonY)
         )
     }

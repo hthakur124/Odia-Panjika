@@ -52,6 +52,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
@@ -217,25 +218,32 @@ private fun CalendarHeritageHeader(
                     Text(
                         text = OdiaFormatting.sakabdaSamvatLine(currentYear, currentMonth),
                         style = MaterialTheme.typography.labelMedium,
-                        fontSize = 13.sp,
+                        fontSize = 12.5.sp,
                         color = colors.accentHighlight,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "${OdiaFormatting.monthNameOdia(currentMonth)} ${OdiaFormatting.toOdiaDigits(currentYear)}",
                         style = MaterialTheme.typography.headlineLarge,
-                        fontSize = 30.sp,
-                        lineHeight = 36.sp,
+                        fontSize = 26.sp,
+                        lineHeight = 32.sp,
                         color = colors.pureWhite,
                         fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        softWrap = false,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.testTag("calendar_month_title")
                     )
                     Text(
                         text = OdiaFormatting.odiaSolarSpan(currentMonth),
                         style = MaterialTheme.typography.bodyMedium,
-                        fontSize = 14.sp,
+                        fontSize = 13.5.sp,
                         color = colors.pureWhite.copy(alpha = 0.92f),
-                        fontWeight = FontWeight.SemiBold
+                        fontWeight = FontWeight.SemiBold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 
@@ -514,19 +522,22 @@ private fun LegendSwatch(bgColor: Color, label: String) {
     val colors = LocalOdiaColors.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(11.dp)
+                .size(10.dp)
                 .clip(RoundedCornerShape(3.dp))
                 .background(bgColor)
         )
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
+            fontSize = 11.5.sp,
             fontWeight = FontWeight.Bold,
-            color = colors.inkPrimary
+            color = colors.inkPrimary,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }
@@ -536,11 +547,11 @@ private fun LegendTextSwatch(textColor: Color, label: String) {
     val colors = LocalOdiaColors.current
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Box(
             modifier = Modifier
-                .size(11.dp)
+                .size(10.dp)
                 .clip(RoundedCornerShape(3.dp))
                 .background(colors.surface)
                 .border(1.5.dp, textColor, RoundedCornerShape(3.dp))
@@ -548,16 +559,20 @@ private fun LegendTextSwatch(textColor: Color, label: String) {
         Text(
             text = label,
             style = MaterialTheme.typography.labelMedium,
+            fontSize = 11.5.sp,
             fontWeight = FontWeight.Bold,
-            color = textColor
+            color = textColor,
+            maxLines = 1,
+            softWrap = false
         )
     }
 }
 
 /**
  * Upcoming Festival Card ("ଆଗାମୀ ପର୍ବ"):
- * - Holidays are prominently styled in Red (full maroon/red square date badge + red holiday title/tag)
- * - Non-holiday festivals feature the theme's secondary square date badge
+ * - Full-width festival title on line 1 (never squeezed or wrapped by the reminder button)
+ * - Compact small reminder bell logo button aligned on the right of line 2
+ * - Holidays use white card background with red square badge, red title text, and red "ଛୁଟି" tag
  */
 @Composable
 private fun UpcomingFestivalCard(
@@ -573,25 +588,25 @@ private fun UpcomingFestivalCard(
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = if (isHolidayItem) colors.holidaySoft.copy(alpha = 0.5f) else colors.surface,
+        color = colors.surface,
         shadowElevation = 1.5.dp,
         border = BorderStroke(
-            width = if (isHolidayItem) 1.3.dp else 1.dp,
-            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.5f) else colors.outline.copy(alpha = 0.75f)
+            width = if (isHolidayItem) 1.2.dp else 1.dp,
+            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.45f) else colors.outline.copy(alpha = 0.75f)
         ),
         modifier = modifier.testTag("month_festival_card_${entry.date.isoKey}")
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 11.dp),
+                .padding(horizontal = 12.dp, vertical = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             // Square Date Badge: Red for Holidays, Secondary for regular festivals
             Box(
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(50.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(if (isHolidayItem) colors.holidayRed else colors.secondary),
                 contentAlignment = Alignment.Center
@@ -599,70 +614,90 @@ private fun UpcomingFestivalCard(
                 Text(
                     text = OdiaFormatting.toOdiaDigits(entry.date.day),
                     style = MaterialTheme.typography.headlineSmall,
-                    fontSize = 23.sp,
+                    fontSize = 21.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colors.pureWhite
+                    color = colors.pureWhite,
+                    maxLines = 1,
+                    softWrap = false
                 )
             }
 
             Column(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+                verticalArrangement = Arrangement.spacedBy(3.dp)
             ) {
+                Text(
+                    text = entry.festival,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 15.5.sp,
+                    lineHeight = 21.sp,
+                    color = if (isHolidayItem) colors.holidayRed else colors.inkPrimary,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(
-                        text = entry.festival,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontSize = 18.sp,
-                        color = if (isHolidayItem) colors.holidayRed else colors.inkPrimary,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f, fill = false)
-                    )
-                    if (isHolidayItem) {
-                        Surface(
-                            shape = RoundedCornerShape(6.dp),
-                            color = colors.holidayRed
-                        ) {
-                            Text(
-                                text = "ଛୁଟି",
-                                style = MaterialTheme.typography.labelSmall,
-                                color = colors.pureWhite,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp)
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Text(
+                            text = "${OdiaFormatting.fullWeekdayOdia(entry.date.dayOfWeek)} • ${entry.tithi}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontSize = 13.5.sp,
+                            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.85f) else colors.inkSecondary,
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+                        if (isHolidayItem) {
+                            Surface(
+                                shape = RoundedCornerShape(6.dp),
+                                color = colors.holidayRed
+                            ) {
+                                Text(
+                                    text = "ଛୁଟି",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontSize = 11.sp,
+                                    color = colors.pureWhite,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    softWrap = false,
+                                    modifier = Modifier.padding(horizontal = 7.dp, vertical = 1.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    Surface(
+                        onClick = onReminderClick,
+                        shape = RoundedCornerShape(8.dp),
+                        color = if (hasReminder) colors.accentContainer else colors.secondarySoft,
+                        modifier = Modifier
+                            .size(30.dp)
+                            .testTag("festival_reminder_btn_${entry.date.isoKey}")
+                    ) {
+                        Box(contentAlignment = Alignment.Center) {
+                            Icon(
+                                imageVector = if (hasReminder) {
+                                    Icons.Rounded.NotificationsActive
+                                } else {
+                                    Icons.Rounded.NotificationsNone
+                                },
+                                contentDescription = stringResource(R.string.cd_add_reminder),
+                                tint = if (hasReminder) colors.primary else colors.secondary,
+                                modifier = Modifier.size(17.dp)
                             )
                         }
                     }
                 }
-                Text(
-                    text = "${OdiaFormatting.fullWeekdayOdia(entry.date.dayOfWeek)} • ${entry.tithi}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontSize = 14.sp,
-                    color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.85f) else colors.inkSecondary,
-                    fontWeight = FontWeight.SemiBold
-                )
-            }
-
-            IconButton(
-                onClick = onReminderClick,
-                modifier = Modifier
-                    .size(48.dp)
-                    .clip(RoundedCornerShape(12.dp))
-                    .background(if (hasReminder) colors.accentContainer else colors.secondarySoft)
-                    .testTag("festival_reminder_btn_${entry.date.isoKey}")
-            ) {
-                Icon(
-                    imageVector = if (hasReminder) {
-                        Icons.Rounded.NotificationsActive
-                    } else {
-                        Icons.Rounded.NotificationsNone
-                    },
-                    contentDescription = stringResource(R.string.cd_add_reminder),
-                    tint = if (hasReminder) colors.primary else colors.secondary,
-                    modifier = Modifier.size(23.dp)
-                )
             }
         }
     }

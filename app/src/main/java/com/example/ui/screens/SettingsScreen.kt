@@ -1,5 +1,7 @@
 package com.example.ui.screens
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,19 +19,27 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ContentCopy
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.FormatSize
 import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.PrivacyTip
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,6 +50,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -60,12 +71,15 @@ fun SettingsScreen(
     onSelectTextSize: (OdiaTextSizeOption) -> Unit,
     onSelectThemePalette: (OdiaThemePalette) -> Unit,
     onOpenHolidaysList: () -> Unit,
+    isPrivacyOptionsRequired: Boolean = false,
+    onOpenAdPrivacySettings: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val colors = LocalOdiaColors.current
     val clipboardManager = LocalClipboardManager.current
     val supportEmail = stringResource(R.string.settings_contact_email)
     var showEmailCopied by remember { mutableStateOf(false) }
+    var showPrivacyDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(showEmailCopied) {
         if (showEmailCopied) {
@@ -216,6 +230,13 @@ fun SettingsScreen(
                         }
                     }
 
+                    // Privacy Policy & Ad Preferences Card (Google Play / AdMob compliant)
+                    PrivacyPolicyCard(
+                        isPrivacyOptionsRequired = isPrivacyOptionsRequired,
+                        onOpenPrivacyPolicy = { showPrivacyDialog = true },
+                        onOpenAdPrivacySettings = onOpenAdPrivacySettings
+                    )
+
                     Spacer(modifier = Modifier.height(2.dp))
 
                     // Under Settings: Full About Odia Panjika & Shri Jagannath Parampara section
@@ -227,6 +248,213 @@ fun SettingsScreen(
             }
         }
     }
+
+    if (showPrivacyDialog) {
+        PrivacyPolicyDialog(
+            supportEmail = supportEmail,
+            onDismiss = { showPrivacyDialog = false }
+        )
+    }
+}
+
+@Composable
+private fun PrivacyPolicyCard(
+    isPrivacyOptionsRequired: Boolean,
+    onOpenPrivacyPolicy: () -> Unit,
+    onOpenAdPrivacySettings: () -> Unit
+) {
+    val colors = LocalOdiaColors.current
+    Surface(
+        shape = RoundedCornerShape(18.dp),
+        color = colors.surface,
+        border = BorderStroke(1.2.dp, colors.outline),
+        shadowElevation = 1.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("settings_privacy_card")
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(42.dp)
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(colors.primary),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.PrivacyTip,
+                        contentDescription = null,
+                        tint = colors.pureWhite,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = stringResource(R.string.settings_privacy_title),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = colors.inkPrimary,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.settings_privacy_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.inkSecondary
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = onOpenPrivacyPolicy,
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.2.dp, colors.primary),
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(48.dp)
+                        .testTag("open_privacy_policy_button")
+                ) {
+                    Text(
+                        text = stringResource(R.string.btn_view_privacy_policy),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = colors.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+                if (isPrivacyOptionsRequired) {
+                    Button(
+                        onClick = onOpenAdPrivacySettings,
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colors.secondary,
+                            contentColor = colors.pureWhite
+                        ),
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(48.dp)
+                            .testTag("open_ad_privacy_options_button")
+                    ) {
+                        Text(
+                            text = stringResource(R.string.btn_ad_privacy_options),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PrivacyPolicyDialog(
+    supportEmail: String,
+    onDismiss: () -> Unit
+) {
+    val colors = LocalOdiaColors.current
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        containerColor = colors.background,
+        shape = RoundedCornerShape(22.dp),
+        title = {
+            Text(
+                text = stringResource(R.string.settings_privacy_title),
+                style = MaterialTheme.typography.titleLarge,
+                color = colors.primary,
+                fontWeight = FontWeight.Bold
+            )
+        },
+        text = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = "Odia Panjika respects your privacy. All calendar reminders, text size choices, and theme color preferences are stored locally on your device and are never uploaded to our servers.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.inkPrimary
+                )
+                Text(
+                    text = "Advertising (Google AdMob)",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = colors.primary,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "This app uses Google AdMob to display banner advertisements. Google and its partners may collect and process your device Advertising ID, approximate location, app interaction events, and diagnostic logs to deliver and measure ads in accordance with Google's Privacy Policy.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.inkSecondary
+                )
+                Text(
+                    text = "Your Choices & Opt-Out",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = colors.primary,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "You can opt out of personalized ads anytime in Android Settings → Google → Ads, or update your consent preferences using Ad Privacy Settings where applicable.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = colors.inkSecondary
+                )
+                Text(
+                    text = "Contact: $supportEmail",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = colors.secondary,
+                    fontWeight = FontWeight.Bold
+                )
+                OutlinedButton(
+                    onClick = {
+                        runCatching {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://policies.google.com/technologies/ads")
+                            )
+                            context.startActivity(intent)
+                        }
+                    },
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, colors.secondary),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                ) {
+                    Text(
+                        text = stringResource(R.string.btn_google_ads_policy),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = colors.secondary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier.height(48.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.btn_close),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = colors.primary,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    )
 }
 
 @Composable
@@ -373,85 +601,42 @@ private fun ThemeColorSettingsCard(
                 )
             }
 
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OdiaThemePalette.entries.forEach { palette ->
                     val isSelected = selectedPalette == palette
                     Surface(
                         onClick = { onSelectPalette(palette) },
-                        shape = RoundedCornerShape(14.dp),
-                        color = if (isSelected) colors.primarySoft else colors.surfaceVariant.copy(alpha = 0.6f),
+                        shape = CircleShape,
+                        color = if (isSelected) palette.previewPrimary.copy(alpha = 0.16f) else colors.surface,
                         border = BorderStroke(
-                            width = if (isSelected) 2.dp else 1.dp,
+                            width = if (isSelected) 2.5.dp else 1.dp,
                             color = if (isSelected) palette.previewPrimary else colors.outline
                         ),
                         modifier = Modifier
-                            .fillMaxWidth()
+                            .size(50.dp)
                             .testTag("theme_palette_${palette.name.lowercase()}")
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 14.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        Box(contentAlignment = Alignment.Center) {
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .clip(CircleShape)
+                                    .background(palette.previewPrimary)
+                                    .border(2.dp, palette.previewAccent, CircleShape),
+                                contentAlignment = Alignment.Center
                             ) {
-                                // 3-dot palette preview
-                                Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(22.dp)
-                                            .clip(CircleShape)
-                                            .background(palette.previewPrimary)
-                                            .border(1.dp, colors.pureWhite, CircleShape)
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .size(18.dp)
-                                            .clip(CircleShape)
-                                            .background(palette.previewAccent)
-                                            .align(Alignment.CenterVertically)
-                                    )
-                                    Box(
-                                        modifier = Modifier
-                                            .size(18.dp)
-                                            .clip(CircleShape)
-                                            .background(palette.previewSecondary)
-                                            .align(Alignment.CenterVertically)
-                                    )
-                                }
-
-                                Column {
-                                    Text(
-                                        text = palette.titleOdia,
-                                        style = MaterialTheme.typography.titleSmall,
-                                        color = colors.inkPrimary,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = palette.titleEnglish,
-                                        style = MaterialTheme.typography.labelMedium,
-                                        color = colors.inkSecondary
-                                    )
-                                }
-                            }
-
-                            if (isSelected) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(28.dp)
-                                        .clip(CircleShape)
-                                        .background(palette.previewPrimary),
-                                    contentAlignment = Alignment.Center
-                                ) {
+                                if (isSelected) {
                                     Icon(
                                         imageVector = Icons.Rounded.Check,
-                                        contentDescription = null,
+                                        contentDescription = palette.titleEnglish,
                                         tint = colors.pureWhite,
-                                        modifier = Modifier.size(18.dp)
+                                        modifier = Modifier.size(20.dp)
                                     )
                                 }
                             }
