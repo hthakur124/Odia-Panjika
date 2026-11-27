@@ -4,6 +4,8 @@ import com.example.data.CalendarDate
 import com.example.data.CsvCalendarParser
 import com.example.data.OdiaFormatting
 import com.example.data.SolarCalculator
+import com.example.ui.theme.OdiaTextSizeOption
+import com.example.ui.theme.OdiaThemePalette
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -54,5 +56,15 @@ class OdiaCalendarUnitTest {
         assertTrue(winterSolar.sunriseEn.endsWith("AM"))
         assertTrue(winterSolar.sunsetEn.endsWith("PM"))
         assertTrue(winterSolar.sunriseOdia.startsWith("୦୬:"))
+    }
+
+    @Test
+    fun appearanceSettingsOptionsResolveSafely() {
+        assertEquals(OdiaTextSizeOption.NORMAL, OdiaTextSizeOption.fromKey(null))
+        assertEquals(OdiaTextSizeOption.LARGE, OdiaTextSizeOption.fromKey("LARGE"))
+        assertEquals(OdiaTextSizeOption.EXTRA_LARGE, OdiaTextSizeOption.fromKey("extra_large"))
+        assertEquals(OdiaThemePalette.VERMILION_HERITAGE, OdiaThemePalette.fromKey("unknown"))
+        assertEquals(OdiaThemePalette.TEMPLE_TEAL, OdiaThemePalette.fromKey("TEMPLE_TEAL"))
+        assertTrue(OdiaTextSizeOption.EXTRA_LARGE.fontScaleMultiplier > OdiaTextSizeOption.LARGE.fontScaleMultiplier)
     }
 }

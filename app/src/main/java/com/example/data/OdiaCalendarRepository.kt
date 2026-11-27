@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.ui.theme.OdiaTextSizeOption
+import com.example.ui.theme.OdiaThemePalette
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -15,6 +17,11 @@ import org.json.JSONObject
 
 private val Context.panjikaDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "odia_panjika_reminders_store"
+)
+
+data class AppearancePreferences(
+    val textSizeOption: OdiaTextSizeOption = OdiaTextSizeOption.NORMAL,
+    val themePalette: OdiaThemePalette = OdiaThemePalette.VERMILION_HERITAGE
 )
 
 class OdiaCalendarRepository(
@@ -30,6 +37,25 @@ class OdiaCalendarRepository(
 
     val remindersFlow: Flow<List<CalendarReminder>> = context.panjikaDataStore.data.map { prefs ->
         decodeReminders(prefs[KEY_REMINDERS_JSON].orEmpty())
+    }
+
+    val appearanceFlow: Flow<AppearancePreferences> = context.panjikaDataStore.data.map { prefs ->
+        AppearancePreferences(
+            textSizeOption = OdiaTextSizeOption.fromKey(prefs[KEY_TEXT_SIZE]),
+            themePalette = OdiaThemePalette.fromKey(prefs[KEY_THEME_PALETTE])
+        )
+    }
+
+    suspend fun saveTextSize(option: OdiaTextSizeOption) {
+        context.panjikaDataStore.edit { prefs ->
+            prefs[KEY_TEXT_SIZE] = option.name
+        }
+    }
+
+    suspend fun saveThemePalette(palette: OdiaThemePalette) {
+        context.panjikaDataStore.edit { prefs ->
+            prefs[KEY_THEME_PALETTE] = palette.name
+        }
     }
 
     suspend fun saveReminder(reminder: CalendarReminder) {
@@ -122,5 +148,7 @@ class OdiaCalendarRepository(
     companion object {
         private const val BUNDLED_ASSET_NAME = "odia_calendar_2027.csv"
         private val KEY_REMINDERS_JSON = stringPreferencesKey("reminders_json")
+        private val KEY_TEXT_SIZE = stringPreferencesKey("odia_text_size")
+        private val KEY_THEME_PALETTE = stringPreferencesKey("odia_theme_palette")
     }
 }

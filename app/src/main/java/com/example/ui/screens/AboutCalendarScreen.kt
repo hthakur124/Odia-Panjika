@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -47,22 +46,7 @@ import com.example.R
 import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.PattachitraHeaderContainer
-import com.example.ui.theme.CreamBackground
-import com.example.ui.theme.CreamOutline
-import com.example.ui.theme.CreamSurface
-import com.example.ui.theme.InkPrimary
-import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.PureWhite
-import com.example.ui.theme.SaffronContainer
-import com.example.ui.theme.SaffronDeep
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.SaffronHighlight
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.TempleTealContainer
-import com.example.ui.theme.TempleTealDark
-import com.example.ui.theme.TempleTealSoft
-import com.example.ui.theme.VermilionRed
-import com.example.ui.theme.VermilionSoft
+import com.example.ui.theme.LocalOdiaColors
 
 @Composable
 fun AboutCalendarScreen(
@@ -70,13 +54,12 @@ fun AboutCalendarScreen(
     onOpenHolidaysList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val totalHolidays = uiState.allEntries.count { it.isFullMaroonHoliday || it.isSunday }
-    val totalFestivals = uiState.allEntries.count { it.hasFestival }
+    val colors = LocalOdiaColors.current
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
-            .background(CreamBackground),
+            .background(colors.background),
         contentPadding = PaddingValues(bottom = 28.dp)
     ) {
         item {
@@ -90,13 +73,13 @@ fun AboutCalendarScreen(
                     Text(
                         text = stringResource(R.string.about_title),
                         style = MaterialTheme.typography.headlineMedium,
-                        color = PureWhite,
+                        color = colors.pureWhite,
                         fontWeight = FontWeight.Bold
                     )
                     Text(
                         text = stringResource(R.string.about_subtitle),
                         style = MaterialTheme.typography.bodyMedium,
-                        color = SaffronHighlight,
+                        color = colors.accentHighlight,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -110,255 +93,285 @@ fun AboutCalendarScreen(
                     .padding(horizontal = 14.dp, vertical = 12.dp),
                 contentAlignment = Alignment.TopCenter
             ) {
-                Column(
+                AboutCalendarCardsSection(
+                    uiState = uiState,
+                    onOpenHolidaysList = onOpenHolidaysList,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .widthIn(max = 680.dp),
-                    verticalArrangement = Arrangement.spacedBy(14.dp)
+                        .widthIn(max = 680.dp)
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Reusable About Odia Panjika & Shri Jagannath Parampara section embedded directly
+ * under Settings as well as available standalone.
+ */
+@Composable
+fun AboutCalendarCardsSection(
+    uiState: OdiaCalendarUiState,
+    onOpenHolidaysList: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val colors = LocalOdiaColors.current
+    val totalHolidays = uiState.allEntries.count { it.isFullMaroonHoliday || it.isSunday }
+    val totalFestivals = uiState.allEntries.count { it.hasFestival }
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        // Section Title
+        Text(
+            text = stringResource(R.string.about_title),
+            style = MaterialTheme.typography.headlineSmall,
+            color = colors.primary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(top = 4.dp, start = 2.dp)
+        )
+
+        // 1. Introduction Card: Odia Panjika
+        Surface(
+            shape = RoundedCornerShape(18.dp),
+            color = colors.surface,
+            border = BorderStroke(1.2.dp, colors.accent.copy(alpha = 0.7f)),
+            shadowElevation = 2.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("about_intro_card")
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    // 1. Introduction Card: Odia Panjika
-                    Surface(
-                        shape = RoundedCornerShape(18.dp),
-                        color = CreamSurface,
-                        border = BorderStroke(1.2.dp, SaffronGold.copy(alpha = 0.7f)),
-                        shadowElevation = 2.dp,
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("about_intro_card")
+                            .size(44.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(colors.primary),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(VermilionRed),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.CalendarMonth,
-                                        contentDescription = null,
-                                        tint = PureWhite,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                                Text(
-                                    text = "ଓଡ଼ିଆ ପଞ୍ଜିକା (Odia Panjika)",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = VermilionRed,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-
-                            Text(
-                                text = "ଓଡ଼ିଆ ପଞ୍ଜିକା ହେଉଛି ଓଡ଼ିଶାରେ ବ୍ୟବହୃତ ପାରମ୍ପରିକ ହିନ୍ଦୁ କ୍ୟାଲେଣ୍ଡର, ଯାହା ସୌର ଏବଂ ଚାନ୍ଦ୍ର ଗଣନା ଉପରେ ଆଧାରିତ। ଏହା ମାଧ୍ୟମରେ ଦୈନିକ ତିଥି, ନକ୍ଷତ୍ର, ରାଶି, ପର୍ବପର୍ବାଣି, ବ୍ରତ, ସୂର୍ଯ୍ୟୋଦୟ-ସୂର୍ଯ୍ୟାସ୍ତ ଏବଂ ଶୁଭ ମୁହୂର୍ତ୍ତ ସମ୍ପର୍କରେ ସଠିକ୍ ସୂଚନା ମିଳିଥାଏ।",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = InkPrimary,
-                                lineHeight = 27.sp
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Rounded.CalendarMonth,
+                            contentDescription = null,
+                            tint = colors.pureWhite,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
+                    Text(
+                        text = "ଓଡ଼ିଆ ପଞ୍ଜିକା (Odia Panjika)",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = colors.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-                    // 2. Odisha & Shri Jagannath Parampara Heritage Card
-                    Surface(
-                        shape = RoundedCornerShape(18.dp),
-                        color = SaffronContainer,
-                        border = BorderStroke(1.5.dp, SaffronGold),
-                        shadowElevation = 2.dp,
+                Text(
+                    text = "ଓଡ଼ିଆ ପଞ୍ଜିକା ହେଉଛି ଓଡ଼ିଶାରେ ବ୍ୟବହୃତ ପାରମ୍ପରିକ ହିନ୍ଦୁ କ୍ୟାଲେଣ୍ଡର, ଯାହା ସୌର ଏବଂ ଚାନ୍ଦ୍ର ଗଣନା ଉପରେ ଆଧାରିତ। ଏହା ମାଧ୍ୟମରେ ଦୈନିକ ତିଥି, ନକ୍ଷତ୍ର, ରାଶି, ପର୍ବପର୍ବାଣି, ବ୍ରତ, ସୂର୍ଯ୍ୟୋଦୟ-ସୂର୍ଯ୍ୟାସ୍ତ ଏବଂ ଶୁଭ ମୁହୂର୍ତ୍ତ ସମ୍ପର୍କରେ ସଠିକ୍ ସୂଚନା ମିଳିଥାଏ।",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colors.inkPrimary,
+                    lineHeight = 27.sp
+                )
+            }
+        }
+
+        // 2. Odisha & Shri Jagannath Parampara Heritage Card
+        Surface(
+            shape = RoundedCornerShape(18.dp),
+            color = colors.accentContainer,
+            border = BorderStroke(1.5.dp, colors.accent),
+            shadowElevation = 2.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("about_jagannath_card")
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("about_jagannath_card")
+                            .size(44.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(colors.accent),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(SaffronGold),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.AccountBalance,
-                                        contentDescription = null,
-                                        tint = InkPrimary,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                                Text(
-                                    text = "ଓଡ଼ିଶା ଓ ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା",
-                                    style = MaterialTheme.typography.titleLarge,
-                                    color = VermilionRed,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-
-                            Text(
-                                text = "ଓଡ଼ିଆ ପଞ୍ଜିକାର ପ୍ରାଣକେନ୍ଦ୍ର ହେଉଛି ଶ୍ରୀକ୍ଷେତ୍ର ପୁରୀ ଓ ମହାପ୍ରଭୁ ଶ୍ରୀଜଗନ୍ନାଥଙ୍କ ଅନନ୍ୟ ସଂସ୍କୃତି। ଶ୍ରୀମନ୍ଦିରର ମୁକ୍ତିମଣ୍ଡପ ପଣ୍ଡିତସଭା ଓ ପାରମ୍ପରିକ ଗଣନା ଅନୁସାରେ ମହାପ୍ରଭୁଙ୍କ ଦ୍ୱାଦଶ ଯାତ୍ରା — ଯେପରିକି ଦେବସ୍ନାନ ପୂର୍ଣ୍ଣିମା, ବିଶ୍ୱପ୍ରସିଦ୍ଧ ରଥଯାତ୍ରା (ଶ୍ରୀଗୁଣ୍ଡିଚା), ବାହୁଡ଼ା, ଚନ୍ଦନ ଯାତ୍ରା, ଦୋଳ ପୂର୍ଣ୍ଣିମା ଓ କାର୍ତ୍ତିକ ବ୍ରତ ଆଦି ସମସ୍ତ ନୀତିକାନ୍ତି ଏବଂ ପର୍ବପର୍ବାଣି ନିର୍ଦ୍ଧାରିତ ହୋଇଥାଏ।",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = InkPrimary,
-                                lineHeight = 27.sp
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Rounded.AccountBalance,
+                            contentDescription = null,
+                            tint = colors.inkPrimary,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
+                    Text(
+                        text = "ଓଡ଼ିଶା ଓ ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = colors.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
 
-                    // 3. Key Features (ମୁଖ୍ୟ ବୈଶିଷ୍ଟ୍ୟ)
-                    Surface(
-                        shape = RoundedCornerShape(18.dp),
-                        color = CreamSurface,
-                        border = BorderStroke(1.2.dp, CreamOutline),
-                        shadowElevation = 1.dp,
+                Text(
+                    text = "ଓଡ଼ିଆ ପଞ୍ଜିକାର ପ୍ରାଣକେନ୍ଦ୍ର ହେଉଛି ଶ୍ରୀକ୍ଷେତ୍ର ପୁରୀ ଓ ମହାପ୍ରଭୁ ଶ୍ରୀଜଗନ୍ନାଥଙ୍କ ଅନନ୍ୟ ସଂସ୍କୃତି। ଶ୍ରୀମନ୍ଦିରର ମୁକ୍ତିମଣ୍ଡପ ପଣ୍ଡିତସଭା ଓ ପାରମ୍ପରିକ ଗଣନା ଅନୁସାରେ ମହାପ୍ରଭୁଙ୍କ ଦ୍ୱାଦଶ ଯାତ୍ରା — ଯେପରିକି ଦେବସ୍ନାନ ପୂର୍ଣ୍ଣିମା, ବିଶ୍ୱପ୍ରସିଦ୍ଧ ରଥଯାତ୍ରା (ଶ୍ରୀଗୁଣ୍ଡିଚା), ବାହୁଡ଼ା, ଚନ୍ଦନ ଯାତ୍ରା, ଦୋଳ ପୂର୍ଣ୍ଣିମା ଓ କାର୍ତ୍ତିକ ବ୍ରତ ଆଦି ସମସ୍ତ ନୀତିକାନ୍ତି ଏବଂ ପର୍ବପର୍ବାଣି ନିର୍ଦ୍ଧାରିତ ହୋଇଥାଏ।",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colors.inkPrimary,
+                    lineHeight = 27.sp
+                )
+            }
+        }
+
+        // 3. Key Features (ମୁଖ୍ୟ ବୈଶିଷ୍ଟ୍ୟ)
+        Surface(
+            shape = RoundedCornerShape(18.dp),
+            color = colors.surface,
+            border = BorderStroke(1.2.dp, colors.outline),
+            shadowElevation = 1.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("about_features_card")
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "ମୁଖ୍ୟ ବୈଶିଷ୍ଟ୍ୟ",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = colors.secondaryDark,
+                    fontWeight = FontWeight.Bold
+                )
+
+                FeatureBulletItem(
+                    icon = Icons.Rounded.AutoAwesome,
+                    badgeColor = colors.secondary,
+                    title = "ମାସ ଓ ଋତୁ",
+                    description = "ବୈଶାଖରୁ ଚୈତ୍ର ପର୍ଯ୍ୟନ୍ତ ୧୨ଟି ଓଡ଼ିଆ ମାସ (ବୈଶାଖ, ଜ୍ୟେଷ୍ଠ, ଆଷାଢ଼, ଶ୍ରାବଣ, ଭାଦ୍ରବ, ଆଶ୍ୱିନ, କାର୍ତ୍ତିକ, ମାର୍ଗଶିର, ପୌଷ, ମାଘ, ଫାଲ୍ଗୁନ, ଚୈତ୍ର) ଏବଂ ୬ଟି ଋତୁ (ଗ୍ରୀଷ୍ମ, ବର୍ଷା, ଶରତ, ହେମନ୍ତ, ଶୀତ, ବସନ୍ତ) ରହିଛି।"
+                )
+
+                FeatureBulletItem(
+                    icon = Icons.Rounded.Celebration,
+                    badgeColor = colors.accent,
+                    iconTint = colors.inkPrimary,
+                    title = "ଓଡ଼ିଆ ନୂଆ ବର୍ଷ",
+                    description = "ମହାବିଷୁବ ସଂକ୍ରାନ୍ତି (ପଣା ସଂକ୍ରାନ୍ତି) ଓଡ଼ିଆ ନୂଆ ବର୍ଷ ଭାବେ ପାଳିତ ହୁଏ ଏବଂ ଏହି ପବିତ୍ର ଦିନଠାରୁ ନୂତନ ଓଡ଼ିଆ ପଞ୍ଜିକା ପ୍ରଚଳନ ଆରମ୍ଭ ହୁଏ।"
+                )
+
+                FeatureBulletItem(
+                    icon = Icons.Rounded.WbSunny,
+                    badgeColor = colors.primary,
+                    title = "ଦୈନିକ ଗଣନା",
+                    description = "ସୂର୍ଯ୍ୟୋଦୟରୁ ପରଦିନ ସୂର୍ଯ୍ୟୋଦୟ ପର୍ଯ୍ୟନ୍ତ ଦିନ ଗଣାଯାଏ ଏବଂ ଶୁକ୍ଳ ପକ୍ଷ ଓ କୃଷ୍ଣ ପକ୍ଷ ଅନୁସାରେ ତିଥି, ନକ୍ଷତ୍ର ଓ ରାଶି ନିର୍ଣ୍ଣୟ ହୁଏ।"
+                )
+            }
+        }
+
+        // 4. Chuti Dina (ଛୁଟିଦିନ) Dedicated Holiday Card
+        Surface(
+            shape = RoundedCornerShape(18.dp),
+            color = colors.holidaySoft,
+            border = BorderStroke(1.5.dp, colors.holidayRed.copy(alpha = 0.65f)),
+            shadowElevation = 2.dp,
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("about_chutidina_card")
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Box(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("about_features_card")
+                            .size(44.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(colors.holidayRed),
+                        contentAlignment = Alignment.Center
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Text(
-                                text = "ମୁଖ୍ୟ ବୈଶିଷ୍ଟ୍ୟ",
-                                style = MaterialTheme.typography.titleLarge,
-                                color = TempleTealDark,
-                                fontWeight = FontWeight.Bold
-                            )
-
-                            FeatureBulletItem(
-                                icon = Icons.Rounded.AutoAwesome,
-                                badgeColor = TempleTeal,
-                                title = "ମାସ ଓ ଋତୁ",
-                                description = "ବୈଶାଖରୁ ଚୈତ୍ର ପର୍ଯ୍ୟନ୍ତ ୧୨ଟି ଓଡ଼ିଆ ମାସ (ବୈଶାଖ, ଜ୍ୟେଷ୍ଠ, ଆଷାଢ଼, ଶ୍ରାବଣ, ଭାଦ୍ରବ, ଆଶ୍ୱିନ, କାର୍ତ୍ତିକ, ମାର୍ଗଶିର, ପୌଷ, ମାଘ, ଫାଲ୍ଗୁନ, ଚୈତ୍ର) ଏବଂ ୬ଟି ଋତୁ (ଗ୍ରୀଷ୍ମ, ବର୍ଷା, ଶରତ, ହେମନ୍ତ, ଶୀତ, ବସନ୍ତ) ରହିଛି।"
-                            )
-
-                            FeatureBulletItem(
-                                icon = Icons.Rounded.Celebration,
-                                badgeColor = SaffronGold,
-                                iconTint = InkPrimary,
-                                title = "ଓଡ଼ିଆ ନୂଆ ବର୍ଷ",
-                                description = "ମହାବିଷୁବ ସଂକ୍ରାନ୍ତି (ପଣା ସଂକ୍ରାନ୍ତି) ଓଡ଼ିଆ ନୂଆ ବର୍ଷ ଭାବେ ପାଳିତ ହୁଏ ଏବଂ ଏହି ପବିତ୍ର ଦିନଠାରୁ ନୂତନ ଓଡ଼ିଆ ପଞ୍ଜିକା ପ୍ରଚଳନ ଆରମ୍ଭ ହୁଏ।"
-                            )
-
-                            FeatureBulletItem(
-                                icon = Icons.Rounded.WbSunny,
-                                badgeColor = VermilionRed,
-                                title = "ଦୈନିକ ଗଣନା",
-                                description = "ସୂର୍ଯ୍ୟୋଦୟରୁ ପରଦିନ ସୂର୍ଯ୍ୟୋଦୟ ପର୍ଯ୍ୟନ୍ତ ଦିନ ଗଣାଯାଏ ଏବଂ ଶୁକ୍ଳ ପକ୍ଷ ଓ କୃଷ୍ଣ ପକ୍ଷ ଅନୁସାରେ ତିଥି, ନକ୍ଷତ୍ର ଓ ରାଶି ନିର୍ଣ୍ଣୟ ହୁଏ।"
-                            )
-                        }
+                        Icon(
+                            imageVector = Icons.Rounded.EventBusy,
+                            contentDescription = null,
+                            tint = colors.pureWhite,
+                            modifier = Modifier.size(24.dp)
+                        )
                     }
-
-                    // 4. Chuti Dina (ଛୁଟିଦିନ) Dedicated Red-Accented Card
-                    Surface(
-                        shape = RoundedCornerShape(18.dp),
-                        color = VermilionSoft,
-                        border = BorderStroke(1.5.dp, VermilionRed.copy(alpha = 0.65f)),
-                        shadowElevation = 2.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("about_chutidina_card")
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(12.dp)
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                Box(
-                                    modifier = Modifier
-                                        .size(44.dp)
-                                        .clip(RoundedCornerShape(10.dp))
-                                        .background(VermilionRed),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.EventBusy,
-                                        contentDescription = null,
-                                        tint = PureWhite,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                                Column {
-                                    Text(
-                                        text = "ଛୁଟିଦିନ (Chuti Dina)",
-                                        style = MaterialTheme.typography.titleLarge,
-                                        color = VermilionRed,
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Text(
-                                        text = "୨୦୨୭ ଓଡ଼ିଶା ଛୁଟି ଓ ପର୍ବ ସୂଚୀ",
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = InkSecondary
-                                    )
-                                }
-                            }
-
-                            Text(
-                                text = "ଓଡ଼ିଆ କ୍ୟାଲେଣ୍ଡରରେ ପ୍ରତି ରବିବାର, ଦ୍ୱିତୀୟ ଓ ଚତୁର୍ଥ ଶନିବାର, ରାଜ୍ୟର ପ୍ରମୁଖ ପର୍ବପର୍ବାଣି (ମକର ସଂକ୍ରାନ୍ତି, ସରସ୍ୱତୀ ପୂଜା, ମହାଶିବରାତ୍ରି, ପଣା ସଂକ୍ରାନ୍ତି, ରଜ, ଶ୍ରୀଗୁଣ୍ଡିଚା ରଥଯାତ୍ରା, ଜନ୍ମାଷ୍ଟମୀ, ଗଣେଶ ପୂଜା, ନୂଆଖାଇ, ଦୁର୍ଗାପୂଜା, ଦୀପାବଳୀ, ବଡ଼ଦିନ) ଏବଂ ଜାତୀୟ ଦିବସଗୁଡ଼ିକୁ ଛୁଟିଦିନ ଭାବେ ଲାଲ୍ (ମାରୁନ୍) ରଙ୍ଗରେ ସ୍ପଷ୍ଟ ଭାବେ ଚିହ୍ନିତ କରାଯାଇଛି।",
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = InkPrimary,
-                                lineHeight = 27.sp
-                            )
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
-                            ) {
-                                SummaryCountBox(
-                                    count = OdiaFormatting.toOdiaDigits(totalHolidays),
-                                    label = "ମୋଟ ଛୁଟିଦିନ",
-                                    bg = VermilionRed,
-                                    fg = PureWhite,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                SummaryCountBox(
-                                    count = OdiaFormatting.toOdiaDigits(totalFestivals),
-                                    label = "ପ୍ରମୁଖ ପର୍ବପର୍ବାଣି",
-                                    bg = TempleTeal,
-                                    fg = PureWhite,
-                                    modifier = Modifier.weight(1f)
-                                )
-                            }
-
-                            Button(
-                                onClick = onOpenHolidaysList,
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = VermilionRed,
-                                    contentColor = PureWhite
-                                ),
-                                contentPadding = PaddingValues(vertical = 13.dp, horizontal = 18.dp),
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .testTag("about_view_holidays_button")
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.btn_view_all_holidays),
-                                    style = MaterialTheme.typography.titleSmall,
-                                    fontWeight = FontWeight.Bold
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
-                        }
+                    Column {
+                        Text(
+                            text = "ଛୁଟିଦିନ (Chuti Dina)",
+                            style = MaterialTheme.typography.titleLarge,
+                            color = colors.holidayRed,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            text = "୨୦୨୭ ଓଡ଼ିଶା ଛୁଟି ଓ ପର୍ବ ସୂଚୀ",
+                            style = MaterialTheme.typography.labelLarge,
+                            color = colors.inkSecondary
+                        )
                     }
+                }
+
+                Text(
+                    text = "ଓଡ଼ିଆ କ୍ୟାଲେଣ୍ଡରରେ ପ୍ରତି ରବିବାର, ଦ୍ୱିତୀୟ ଓ ଚତୁର୍ଥ ଶନିବାର, ରାଜ୍ୟର ପ୍ରମୁଖ ପର୍ବପର୍ବାଣି (ମକର ସଂକ୍ରାନ୍ତି, ସରସ୍ୱତୀ ପୂଜା, ମହାଶିବରାତ୍ରି, ପଣା ସଂକ୍ରାନ୍ତି, ରଜ, ଶ୍ରୀଗୁଣ୍ଡିଚା ରଥଯାତ୍ରା, ଜନ୍ମାଷ୍ଟମୀ, ଗଣେଶ ପୂଜା, ନୂଆଖାଇ, ଦୁର୍ଗାପୂଜା, ଦୀପାବଳୀ, ବଡ଼ଦିନ) ଏବଂ ଜାତୀୟ ଦିବସଗୁଡ଼ିକୁ ଛୁଟିଦିନ ଭାବେ ଲାଲ୍ (ମାରୁନ୍) ରଙ୍ଗରେ ସ୍ପଷ୍ଟ ଭାବେ ଚିହ୍ନିତ କରାଯାଇଛି।",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = colors.inkPrimary,
+                    lineHeight = 27.sp
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    SummaryCountBox(
+                        count = OdiaFormatting.toOdiaDigits(totalHolidays),
+                        label = "ମୋଟ ଛୁଟିଦିନ",
+                        bg = colors.holidayRed,
+                        fg = colors.pureWhite,
+                        modifier = Modifier.weight(1f)
+                    )
+                    SummaryCountBox(
+                        count = OdiaFormatting.toOdiaDigits(totalFestivals),
+                        label = "ପ୍ରମୁଖ ପର୍ବପର୍ବାଣି",
+                        bg = colors.secondary,
+                        fg = colors.pureWhite,
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Button(
+                    onClick = onOpenHolidaysList,
+                    shape = RoundedCornerShape(14.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = colors.holidayRed,
+                        contentColor = colors.pureWhite
+                    ),
+                    contentPadding = PaddingValues(vertical = 13.dp, horizontal = 18.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("about_view_holidays_button")
+                ) {
+                    Text(
+                        text = stringResource(R.string.btn_view_all_holidays),
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
                 }
             }
         }
@@ -371,8 +384,9 @@ private fun FeatureBulletItem(
     badgeColor: Color,
     title: String,
     description: String,
-    iconTint: Color = PureWhite
+    iconTint: Color = Color.White
 ) {
+    val colors = LocalOdiaColors.current
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -400,13 +414,13 @@ private fun FeatureBulletItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = InkPrimary,
+                color = colors.inkPrimary,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = description,
                 style = MaterialTheme.typography.bodyMedium,
-                color = InkSecondary,
+                color = colors.inkSecondary,
                 lineHeight = 23.sp
             )
         }

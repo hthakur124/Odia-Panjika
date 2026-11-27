@@ -54,21 +54,7 @@ import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.LunarPhaseDot
 import com.example.ui.components.PattachitraHeaderContainer
-import com.example.ui.theme.CreamBackground
-import com.example.ui.theme.CreamOutline
-import com.example.ui.theme.CreamSurface
-import com.example.ui.theme.InkPrimary
-import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.PureWhite
-import com.example.ui.theme.SaffronContainer
-import com.example.ui.theme.SaffronDeep
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.SaffronHighlight
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.TempleTealContainer
-import com.example.ui.theme.TempleTealDark
-import com.example.ui.theme.TempleTealSoft
-import com.example.ui.theme.VermilionRed
+import com.example.ui.theme.LocalOdiaColors
 
 @Composable
 fun FestivalsScreen(
@@ -79,13 +65,14 @@ fun FestivalsScreen(
     onAddReminder: (CalendarDate, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalOdiaColors.current
     val filtered = uiState.filteredFestivals
     val reminderDates = uiState.remindersByDate.keys
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(CreamBackground)
+            .background(colors.background)
     ) {
         PattachitraHeaderContainer {
             Column(
@@ -103,25 +90,25 @@ fun FestivalsScreen(
                         Text(
                             text = stringResource(R.string.festivals_title),
                             style = MaterialTheme.typography.headlineMedium,
-                            color = PureWhite,
+                            color = colors.pureWhite,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = stringResource(R.string.festivals_subtitle),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = SaffronHighlight,
+                            color = colors.accentHighlight,
                             fontWeight = FontWeight.SemiBold
                         )
                     }
 
                     Surface(
                         shape = RoundedCornerShape(50),
-                        color = SaffronGold
+                        color = colors.accent
                     ) {
                         Text(
                             text = "${OdiaFormatting.toOdiaDigits(filtered.size)} ଟି",
                             style = MaterialTheme.typography.titleSmall,
-                            color = InkPrimary,
+                            color = colors.inkPrimary,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
                         )
@@ -146,14 +133,14 @@ fun FestivalsScreen(
                         Text(
                             text = stringResource(R.string.search_festivals_placeholder),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = InkSecondary
+                            color = colors.inkSecondary
                         )
                     },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Rounded.Search,
                             contentDescription = null,
-                            tint = VermilionRed
+                            tint = colors.primary
                         )
                     },
                     trailingIcon = {
@@ -165,7 +152,7 @@ fun FestivalsScreen(
                                 Icon(
                                     imageVector = Icons.Rounded.Clear,
                                     contentDescription = stringResource(R.string.cd_clear_search),
-                                    tint = InkSecondary
+                                    tint = colors.inkSecondary
                                 )
                             }
                         }
@@ -173,10 +160,10 @@ fun FestivalsScreen(
                     singleLine = true,
                     shape = RoundedCornerShape(18.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedContainerColor = CreamSurface,
-                        unfocusedContainerColor = CreamSurface,
-                        focusedBorderColor = VermilionRed,
-                        unfocusedBorderColor = CreamOutline
+                        focusedContainerColor = colors.surface,
+                        unfocusedContainerColor = colors.surface,
+                        focusedBorderColor = colors.primary,
+                        unfocusedBorderColor = colors.outline
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -209,16 +196,16 @@ fun FestivalsScreen(
                                 )
                             },
                             colors = FilterChipDefaults.filterChipColors(
-                                containerColor = CreamSurface,
-                                labelColor = InkPrimary,
-                                selectedContainerColor = TempleTeal,
-                                selectedLabelColor = PureWhite
+                                containerColor = colors.surface,
+                                labelColor = colors.inkPrimary,
+                                selectedContainerColor = colors.secondary,
+                                selectedLabelColor = colors.pureWhite
                             ),
                             border = FilterChipDefaults.filterChipBorder(
                                 enabled = true,
                                 selected = selected,
-                                borderColor = CreamOutline,
-                                selectedBorderColor = TempleTeal
+                                borderColor = colors.outline,
+                                selectedBorderColor = colors.secondary
                             ),
                             modifier = Modifier.testTag("festival_filter_${filter.name.lowercase()}")
                         )
@@ -241,13 +228,13 @@ fun FestivalsScreen(
                             Icon(
                                 imageVector = Icons.Rounded.EventNote,
                                 contentDescription = null,
-                                tint = SaffronGold,
+                                tint = colors.accent,
                                 modifier = Modifier.size(52.dp)
                             )
                             Text(
                                 text = stringResource(R.string.empty_festivals_search),
                                 style = MaterialTheme.typography.titleMedium,
-                                color = InkSecondary,
+                                color = colors.inkSecondary,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -287,17 +274,18 @@ private fun FestivalDirectoryCard(
     onClick: () -> Unit,
     onAddReminder: () -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     val isHolidayItem = entry.isFullMaroonHoliday || entry.isHoliday
-    val badgeBg = if (isHolidayItem) VermilionRed else TempleTeal
-    val badgeFg = PureWhite
+    val badgeBg = if (isHolidayItem) colors.holidayRed else colors.secondary
+    val badgeFg = colors.pureWhite
 
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = if (isHolidayItem) com.example.ui.theme.VermilionSoft.copy(alpha = 0.5f) else CreamSurface,
+        color = if (isHolidayItem) colors.holidaySoft.copy(alpha = 0.5f) else colors.surface,
         border = BorderStroke(
             width = if (isHolidayItem) 1.3.dp else 1.dp,
-            color = if (isHolidayItem) VermilionRed.copy(alpha = 0.5f) else CreamOutline
+            color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.5f) else colors.outline
         ),
         shadowElevation = 1.5.dp,
         modifier = Modifier
@@ -354,7 +342,7 @@ private fun FestivalDirectoryCard(
                         text = entry.festival.ifBlank { stringResource(R.string.label_holiday_badge) },
                         style = MaterialTheme.typography.titleMedium,
                         fontSize = 18.sp,
-                        color = if (isHolidayItem) VermilionRed else InkPrimary,
+                        color = if (isHolidayItem) colors.holidayRed else colors.inkPrimary,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -362,7 +350,7 @@ private fun FestivalDirectoryCard(
                 Text(
                     text = "${OdiaFormatting.fullWeekdayOdia(entry.date.dayOfWeek)} • ${entry.tithi}",
                     style = MaterialTheme.typography.bodyMedium,
-                    color = if (isHolidayItem) VermilionRed.copy(alpha = 0.85f) else InkSecondary
+                    color = if (isHolidayItem) colors.holidayRed.copy(alpha = 0.85f) else colors.inkSecondary
                 )
 
                 Row(
@@ -370,13 +358,13 @@ private fun FestivalDirectoryCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (isHolidayItem) {
-                        MetaBadge(text = "ଛୁଟି", bg = VermilionRed, fg = PureWhite)
+                        MetaBadge(text = "ଛୁଟି", bg = colors.holidayRed, fg = colors.pureWhite)
                     }
                     if (entry.nakshatra.isNotBlank()) {
-                        MetaBadge(text = entry.nakshatra, bg = TempleTealContainer, fg = TempleTealDark)
+                        MetaBadge(text = entry.nakshatra, bg = colors.secondaryContainer, fg = colors.secondaryDark)
                     }
                     if (entry.rashi.isNotBlank()) {
-                        MetaBadge(text = entry.rashi, bg = SaffronContainer, fg = SaffronDeep)
+                        MetaBadge(text = entry.rashi, bg = colors.accentContainer, fg = colors.accentDeep)
                     }
                 }
             }
@@ -386,7 +374,7 @@ private fun FestivalDirectoryCard(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(12.dp))
-                    .background(if (hasReminder) SaffronContainer else TempleTealSoft)
+                    .background(if (hasReminder) colors.accentContainer else colors.secondarySoft)
             ) {
                 Icon(
                     imageVector = if (hasReminder) {
@@ -395,7 +383,7 @@ private fun FestivalDirectoryCard(
                         Icons.Rounded.NotificationsNone
                     },
                     contentDescription = stringResource(R.string.cd_add_reminder),
-                    tint = if (hasReminder) VermilionRed else TempleTeal,
+                    tint = if (hasReminder) colors.primary else colors.secondary,
                     modifier = Modifier.size(23.dp)
                 )
             }

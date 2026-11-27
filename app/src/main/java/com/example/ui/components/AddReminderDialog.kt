@@ -49,18 +49,7 @@ import androidx.core.content.ContextCompat
 import com.example.R
 import com.example.data.CalendarDate
 import com.example.data.OdiaFormatting
-import com.example.ui.theme.CreamBackground
-import com.example.ui.theme.CreamOutline
-import com.example.ui.theme.CreamSurface
-import com.example.ui.theme.InkPrimary
-import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.PureWhite
-import com.example.ui.theme.SaffronContainer
-import com.example.ui.theme.SaffronDeep
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.TempleTealSoft
-import com.example.ui.theme.VermilionRed
+import com.example.ui.theme.LocalOdiaColors
 
 @Composable
 fun AddReminderDialog(
@@ -69,6 +58,7 @@ fun AddReminderDialog(
     onDismiss: () -> Unit,
     onSave: (title: String, note: String, hour: Int, minute: Int) -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     val context = LocalContext.current
     var title by remember(date, initialTitle) { mutableStateOf(initialTitle) }
     var note by remember(date) { mutableStateOf("") }
@@ -84,18 +74,18 @@ fun AddReminderDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        containerColor = CreamBackground,
+        containerColor = colors.background,
         shape = RoundedCornerShape(24.dp),
         icon = {
             Surface(
                 shape = RoundedCornerShape(14.dp),
-                color = TempleTeal,
+                color = colors.secondary,
                 modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     imageVector = Icons.Rounded.NotificationsActive,
                     contentDescription = null,
-                    tint = PureWhite,
+                    tint = colors.pureWhite,
                     modifier = Modifier.padding(11.dp)
                 )
             }
@@ -105,19 +95,19 @@ fun AddReminderDialog(
                 Text(
                     text = stringResource(R.string.btn_add_reminder),
                     style = MaterialTheme.typography.titleLarge,
-                    color = VermilionRed,
+                    color = colors.primary,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = SaffronContainer,
-                    border = BorderStroke(1.dp, SaffronGold)
+                    color = colors.accentContainer,
+                    border = BorderStroke(1.dp, colors.accent)
                 ) {
                     Text(
                         text = "${OdiaFormatting.formatDateOdiaFull(date)} • ${OdiaFormatting.fullWeekdayOdia(date.dayOfWeek)}",
                         style = MaterialTheme.typography.labelLarge,
-                        color = SaffronDeep,
+                        color = colors.accentDeep,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
                     )
@@ -147,10 +137,10 @@ fun AddReminderDialog(
                     singleLine = true,
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = TempleTeal,
-                        unfocusedBorderColor = CreamOutline,
-                        focusedContainerColor = CreamSurface,
-                        unfocusedContainerColor = CreamSurface
+                        focusedBorderColor = colors.secondary,
+                        unfocusedBorderColor = colors.outline,
+                        focusedContainerColor = colors.surface,
+                        unfocusedContainerColor = colors.surface
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -175,10 +165,10 @@ fun AddReminderDialog(
                     maxLines = 2,
                     shape = RoundedCornerShape(14.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = TempleTeal,
-                        unfocusedBorderColor = CreamOutline,
-                        focusedContainerColor = CreamSurface,
-                        unfocusedContainerColor = CreamSurface
+                        focusedBorderColor = colors.secondary,
+                        unfocusedBorderColor = colors.outline,
+                        focusedContainerColor = colors.surface,
+                        unfocusedContainerColor = colors.surface
                     ),
                     modifier = Modifier
                         .fillMaxWidth()
@@ -188,7 +178,7 @@ fun AddReminderDialog(
                 Text(
                     text = stringResource(R.string.reminder_time_label),
                     style = MaterialTheme.typography.labelLarge,
-                    color = InkPrimary,
+                    color = colors.inkPrimary,
                     fontWeight = FontWeight.Bold
                 )
 
@@ -210,10 +200,10 @@ fun AddReminderDialog(
                                 minute = presetMin
                             },
                             shape = RoundedCornerShape(12.dp),
-                            color = if (active) TempleTeal else CreamSurface,
+                            color = if (active) colors.secondary else colors.surface,
                             border = BorderStroke(
                                 width = 1.dp,
-                                color = if (active) TempleTeal else CreamOutline
+                                color = if (active) colors.secondary else colors.outline
                             ),
                             modifier = Modifier.weight(1f)
                         ) {
@@ -221,7 +211,7 @@ fun AddReminderDialog(
                                 text = stringResource(labelRes),
                                 style = MaterialTheme.typography.labelSmall,
                                 fontWeight = FontWeight.Bold,
-                                color = if (active) PureWhite else InkPrimary,
+                                color = if (active) colors.pureWhite else colors.inkPrimary,
                                 modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp),
                                 maxLines = 1
                             )
@@ -232,8 +222,8 @@ fun AddReminderDialog(
                 // Fine-tune time stepper row
                 Surface(
                     shape = RoundedCornerShape(14.dp),
-                    color = TempleTealSoft,
-                    border = BorderStroke(1.dp, TempleTeal.copy(alpha = 0.35f)),
+                    color = colors.secondarySoft,
+                    border = BorderStroke(1.dp, colors.secondary.copy(alpha = 0.35f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -254,7 +244,7 @@ fun AddReminderDialog(
                             Icon(
                                 imageVector = Icons.Rounded.Remove,
                                 contentDescription = "Earlier",
-                                tint = TempleTeal
+                                tint = colors.secondary
                             )
                         }
 
@@ -263,7 +253,7 @@ fun AddReminderDialog(
                             style = MaterialTheme.typography.titleLarge,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
-                            color = InkPrimary
+                            color = colors.inkPrimary
                         )
 
                         IconButton(
@@ -277,7 +267,7 @@ fun AddReminderDialog(
                             Icon(
                                 imageVector = Icons.Rounded.Add,
                                 contentDescription = "Later",
-                                tint = TempleTeal
+                                tint = colors.secondary
                             )
                         }
                     }
@@ -301,8 +291,8 @@ fun AddReminderDialog(
                 },
                 shape = RoundedCornerShape(14.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = TempleTeal,
-                    contentColor = PureWhite
+                    containerColor = colors.secondary,
+                    contentColor = colors.pureWhite
                 ),
                 modifier = Modifier
                     .height(48.dp)
@@ -323,7 +313,7 @@ fun AddReminderDialog(
                 Text(
                     text = stringResource(R.string.btn_cancel),
                     style = MaterialTheme.typography.labelLarge,
-                    color = InkSecondary
+                    color = colors.inkSecondary
                 )
             }
         }

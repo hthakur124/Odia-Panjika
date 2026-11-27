@@ -59,24 +59,7 @@ import com.example.data.CalendarReminder
 import com.example.data.OdiaDayEntry
 import com.example.data.OdiaFormatting
 import com.example.data.SolarTimes
-import com.example.ui.theme.CreamBackground
-import com.example.ui.theme.CreamOutline
-import com.example.ui.theme.CreamSurface
-import com.example.ui.theme.InkPrimary
-import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.PureWhite
-import com.example.ui.theme.SaffronBorder
-import com.example.ui.theme.SaffronContainer
-import com.example.ui.theme.SaffronDeep
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.SaffronHighlight
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.TempleTealContainer
-import com.example.ui.theme.TempleTealDark
-import com.example.ui.theme.TempleTealSoft
-import com.example.ui.theme.VermilionDark
-import com.example.ui.theme.VermilionRed
-import com.example.ui.theme.VermilionSoft
+import com.example.ui.theme.LocalOdiaColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,13 +74,14 @@ fun DayDetailBottomSheet(
     onAddReminder: () -> Unit,
     onDeleteReminder: (String) -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = CreamBackground,
-        contentColor = InkPrimary,
+        containerColor = colors.background,
+        contentColor = colors.inkPrimary,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp),
         modifier = Modifier.testTag("day_detail_bottom_sheet")
     ) {
@@ -153,6 +137,7 @@ private fun DayHeroBanner(
     onNextDay: () -> Unit,
     onDismiss: () -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     val isHoliday = entry?.let { it.isFullMaroonHoliday || it.isSunday } ?: false
     val odiaWeekday = OdiaFormatting.fullWeekdayOdia(date.dayOfWeek)
     val englishWeekday = entry?.weekdayEnglish?.ifBlank { null } ?: ""
@@ -167,7 +152,7 @@ private fun DayHeroBanner(
                 .fillMaxWidth()
                 .background(
                     brush = Brush.linearGradient(
-                        colors = listOf(VermilionDark, VermilionRed)
+                        colors = listOf(colors.primaryDark, colors.primary)
                     )
                 )
                 .padding(16.dp)
@@ -185,13 +170,13 @@ private fun DayHeroBanner(
                         if (isHoliday) {
                             Surface(
                                 shape = RoundedCornerShape(50),
-                                color = SaffronGold
+                                color = colors.accent
                             ) {
                                 Text(
                                     text = stringResource(R.string.label_holiday_badge),
                                     style = MaterialTheme.typography.labelMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = InkPrimary,
+                                    color = colors.inkPrimary,
                                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp)
                                 )
                             }
@@ -199,7 +184,7 @@ private fun DayHeroBanner(
                             Text(
                                 text = OdiaFormatting.sakabdaSamvatLine(date.year, date.month),
                                 style = MaterialTheme.typography.labelMedium,
-                                color = SaffronHighlight,
+                                color = colors.accentHighlight,
                                 fontWeight = FontWeight.Bold
                             )
                         }
@@ -214,7 +199,7 @@ private fun DayHeroBanner(
                         Icon(
                             imageVector = Icons.Rounded.Close,
                             contentDescription = stringResource(R.string.cd_close_sheet),
-                            tint = PureWhite
+                            tint = colors.pureWhite
                         )
                     }
                 }
@@ -229,13 +214,13 @@ private fun DayHeroBanner(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .background(PureWhite.copy(alpha = 0.16f))
+                            .background(colors.pureWhite.copy(alpha = 0.16f))
                             .testTag("detail_prev_day_button")
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
                             contentDescription = stringResource(R.string.cd_previous_day),
-                            tint = PureWhite
+                            tint = colors.pureWhite
                         )
                     }
 
@@ -248,7 +233,7 @@ private fun DayHeroBanner(
                         Text(
                             text = OdiaFormatting.formatDateOdiaFull(date),
                             style = MaterialTheme.typography.headlineMedium,
-                            color = PureWhite,
+                            color = colors.pureWhite,
                             fontWeight = FontWeight.Bold
                         )
                         Spacer(modifier = Modifier.height(3.dp))
@@ -261,13 +246,13 @@ private fun DayHeroBanner(
                                 }
                             },
                             style = MaterialTheme.typography.titleSmall,
-                            color = SaffronHighlight,
+                            color = colors.accentHighlight,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = OdiaFormatting.formatDateEnglishFull(date),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = PureWhite.copy(alpha = 0.88f)
+                            color = colors.pureWhite.copy(alpha = 0.88f)
                         )
                     }
 
@@ -276,13 +261,13 @@ private fun DayHeroBanner(
                         modifier = Modifier
                             .size(48.dp)
                             .clip(CircleShape)
-                            .background(PureWhite.copy(alpha = 0.16f))
+                            .background(colors.pureWhite.copy(alpha = 0.16f))
                             .testTag("detail_next_day_button")
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
                             contentDescription = stringResource(R.string.cd_next_day),
-                            tint = PureWhite
+                            tint = colors.pureWhite
                         )
                     }
                 }
@@ -293,9 +278,10 @@ private fun DayHeroBanner(
 
 @Composable
 private fun FestivalSpotlightCard(festivalName: String) {
+    val colors = LocalOdiaColors.current
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = SaffronGold,
+        color = colors.accent,
         modifier = Modifier
             .fillMaxWidth()
             .testTag("detail_festival_card")
@@ -311,13 +297,13 @@ private fun FestivalSpotlightCard(festivalName: String) {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(RoundedCornerShape(14.dp))
-                    .background(VermilionRed),
+                    .background(colors.primary),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Celebration,
                     contentDescription = null,
-                    tint = PureWhite,
+                    tint = colors.pureWhite,
                     modifier = Modifier.size(26.dp)
                 )
             }
@@ -326,7 +312,7 @@ private fun FestivalSpotlightCard(festivalName: String) {
                 Text(
                     text = stringResource(R.string.label_festival),
                     style = MaterialTheme.typography.labelLarge,
-                    color = InkPrimary.copy(alpha = 0.8f),
+                    color = colors.inkPrimary.copy(alpha = 0.8f),
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(2.dp))
@@ -334,7 +320,7 @@ private fun FestivalSpotlightCard(festivalName: String) {
                     text = festivalName,
                     style = MaterialTheme.typography.titleLarge,
                     fontSize = 21.sp,
-                    color = InkPrimary,
+                    color = colors.inkPrimary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -344,6 +330,7 @@ private fun FestivalSpotlightCard(festivalName: String) {
 
 @Composable
 private fun PanchangAttributesSection(entry: OdiaDayEntry?) {
+    val colors = LocalOdiaColors.current
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -353,8 +340,8 @@ private fun PanchangAttributesSection(entry: OdiaDayEntry?) {
                 label = stringResource(R.string.label_tithi),
                 value = entry?.tithi?.ifBlank { "—" } ?: "—",
                 icon = Icons.Rounded.Brightness3,
-                accentColor = PureWhite,
-                badgeColor = VermilionRed,
+                accentColor = colors.pureWhite,
+                badgeColor = colors.primary,
                 modifier = Modifier
                     .weight(1f)
                     .testTag("detail_tithi_tile")
@@ -363,8 +350,8 @@ private fun PanchangAttributesSection(entry: OdiaDayEntry?) {
                 label = stringResource(R.string.label_nakshatra),
                 value = entry?.nakshatra?.ifBlank { "—" } ?: "—",
                 icon = Icons.Rounded.Star,
-                accentColor = InkPrimary,
-                badgeColor = SaffronGold,
+                accentColor = colors.inkPrimary,
+                badgeColor = colors.accent,
                 modifier = Modifier
                     .weight(1f)
                     .testTag("detail_nakshatra_tile")
@@ -375,8 +362,8 @@ private fun PanchangAttributesSection(entry: OdiaDayEntry?) {
             label = stringResource(R.string.label_rashi),
             value = entry?.rashi?.ifBlank { "—" } ?: "—",
             icon = Icons.Rounded.Public,
-            accentColor = PureWhite,
-            badgeColor = TempleTeal,
+            accentColor = colors.pureWhite,
+            badgeColor = colors.secondary,
             modifier = Modifier
                 .fillMaxWidth()
                 .testTag("detail_rashi_tile")
@@ -393,10 +380,11 @@ private fun PanchangInfoTile(
     badgeColor: Color,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalOdiaColors.current
     Surface(
         shape = RoundedCornerShape(18.dp),
-        color = CreamSurface,
-        border = BorderStroke(1.2.dp, CreamOutline),
+        color = colors.surface,
+        border = BorderStroke(1.2.dp, colors.outline),
         shadowElevation = 1.dp,
         modifier = modifier
     ) {
@@ -423,7 +411,7 @@ private fun PanchangInfoTile(
                 Text(
                     text = label,
                     style = MaterialTheme.typography.labelMedium,
-                    color = InkSecondary,
+                    color = colors.inkSecondary,
                     fontWeight = FontWeight.SemiBold
                 )
                 Spacer(modifier = Modifier.height(2.dp))
@@ -431,7 +419,7 @@ private fun PanchangInfoTile(
                     text = value,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 20.sp,
-                    color = InkPrimary,
+                    color = colors.inkPrimary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -441,10 +429,11 @@ private fun PanchangInfoTile(
 
 @Composable
 private fun SolarTimingsCard(solarTimes: SolarTimes) {
+    val colors = LocalOdiaColors.current
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = CreamSurface,
-        border = BorderStroke(1.2.dp, CreamOutline),
+        color = colors.surface,
+        border = BorderStroke(1.2.dp, colors.outline),
         shadowElevation = 1.dp,
         modifier = Modifier
             .fillMaxWidth()
@@ -464,17 +453,17 @@ private fun SolarTimingsCard(solarTimes: SolarTimes) {
                 Text(
                     text = stringResource(R.string.label_solar_location),
                     style = MaterialTheme.typography.labelLarge,
-                    color = TempleTeal,
+                    color = colors.secondary,
                     fontWeight = FontWeight.Bold
                 )
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = TempleTealContainer
+                    color = colors.secondaryContainer
                 ) {
                     Text(
                         text = solarTimes.daylightOdia,
                         style = MaterialTheme.typography.labelMedium,
-                        color = TempleTealDark,
+                        color = colors.secondaryDark,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
                     )
@@ -495,13 +484,13 @@ private fun SolarTimingsCard(solarTimes: SolarTimes) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(SaffronContainer),
+                            .background(colors.accentContainer),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.WbSunny,
                             contentDescription = null,
-                            tint = SaffronDeep,
+                            tint = colors.accentDeep,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -509,14 +498,14 @@ private fun SolarTimingsCard(solarTimes: SolarTimes) {
                         Text(
                             text = stringResource(R.string.label_sunrise),
                             style = MaterialTheme.typography.labelMedium,
-                            color = InkSecondary,
+                            color = colors.inkSecondary,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
                             text = solarTimes.sunriseOdia,
                             style = MaterialTheme.typography.titleMedium,
                             fontSize = 20.sp,
-                            color = InkPrimary,
+                            color = colors.inkPrimary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -530,14 +519,14 @@ private fun SolarTimingsCard(solarTimes: SolarTimes) {
                         Text(
                             text = stringResource(R.string.label_sunset),
                             style = MaterialTheme.typography.labelMedium,
-                            color = InkSecondary,
+                            color = colors.inkSecondary,
                             fontWeight = FontWeight.SemiBold
                         )
                         Text(
                             text = solarTimes.sunsetOdia,
                             style = MaterialTheme.typography.titleMedium,
                             fontSize = 20.sp,
-                            color = InkPrimary,
+                            color = colors.inkPrimary,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -545,13 +534,13 @@ private fun SolarTimingsCard(solarTimes: SolarTimes) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(CircleShape)
-                            .background(VermilionSoft),
+                            .background(colors.primarySoft),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.WbTwilight,
                             contentDescription = null,
-                            tint = VermilionRed,
+                            tint = colors.primary,
                             modifier = Modifier.size(22.dp)
                         )
                     }
@@ -563,10 +552,11 @@ private fun SolarTimingsCard(solarTimes: SolarTimes) {
 
 @Composable
 private fun ShubhaDinCard(shubhaDin: String) {
+    val colors = LocalOdiaColors.current
     Surface(
         shape = RoundedCornerShape(20.dp),
-        color = TempleTealContainer,
-        border = BorderStroke(1.5.dp, TempleTeal),
+        color = colors.secondaryContainer,
+        border = BorderStroke(1.5.dp, colors.secondary),
         modifier = Modifier
             .fillMaxWidth()
             .testTag("detail_shubha_din_card")
@@ -582,13 +572,13 @@ private fun ShubhaDinCard(shubhaDin: String) {
                 modifier = Modifier
                     .size(44.dp)
                     .clip(RoundedCornerShape(13.dp))
-                    .background(TempleTeal),
+                    .background(colors.secondary),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Verified,
                     contentDescription = null,
-                    tint = PureWhite,
+                    tint = colors.pureWhite,
                     modifier = Modifier.size(24.dp)
                 )
             }
@@ -597,7 +587,7 @@ private fun ShubhaDinCard(shubhaDin: String) {
                 Text(
                     text = stringResource(R.string.label_shubha_din),
                     style = MaterialTheme.typography.labelLarge,
-                    color = TempleTealDark,
+                    color = colors.secondaryDark,
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(2.dp))
@@ -605,7 +595,7 @@ private fun ShubhaDinCard(shubhaDin: String) {
                     text = shubhaDin,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 19.sp,
-                    color = InkPrimary,
+                    color = colors.inkPrimary,
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -619,20 +609,21 @@ private fun DayRemindersSection(
     onAddReminder: () -> Unit,
     onDeleteReminder: (String) -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         if (reminders.isNotEmpty()) {
             Text(
                 text = stringResource(R.string.day_reminders_heading),
                 style = MaterialTheme.typography.titleSmall,
-                color = TempleTealDark,
+                color = colors.secondaryDark,
                 fontWeight = FontWeight.Bold
             )
 
             reminders.forEach { reminder ->
                 Surface(
                     shape = RoundedCornerShape(16.dp),
-                    color = TempleTealSoft,
-                    border = BorderStroke(1.dp, TempleTeal.copy(alpha = 0.4f)),
+                    color = colors.secondarySoft,
+                    border = BorderStroke(1.dp, colors.secondary.copy(alpha = 0.4f)),
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Row(
@@ -645,14 +636,14 @@ private fun DayRemindersSection(
                         Icon(
                             imageVector = Icons.Rounded.NotificationsActive,
                             contentDescription = null,
-                            tint = TempleTeal,
+                            tint = colors.secondary,
                             modifier = Modifier.size(22.dp)
                         )
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
                                 text = reminder.title,
                                 style = MaterialTheme.typography.titleSmall,
-                                color = InkPrimary,
+                                color = colors.inkPrimary,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
@@ -664,7 +655,7 @@ private fun DayRemindersSection(
                                     }
                                 },
                                 style = MaterialTheme.typography.bodySmall,
-                                color = InkSecondary
+                                color = colors.inkSecondary
                             )
                         }
                         IconButton(
@@ -674,7 +665,7 @@ private fun DayRemindersSection(
                             Icon(
                                 imageVector = Icons.Rounded.DeleteOutline,
                                 contentDescription = stringResource(R.string.cd_delete_reminder),
-                                tint = VermilionRed
+                                tint = colors.holidayRed
                             )
                         }
                     }
@@ -686,8 +677,8 @@ private fun DayRemindersSection(
             onClick = onAddReminder,
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = TempleTeal,
-                contentColor = PureWhite
+                containerColor = colors.secondary,
+                contentColor = colors.pureWhite
             ),
             contentPadding = PaddingValues(vertical = 14.dp, horizontal = 20.dp),
             modifier = Modifier

@@ -11,6 +11,8 @@ import com.example.data.OdiaDayEntry
 import com.example.data.OdiaFormatting
 import com.example.data.SolarCalculator
 import com.example.data.SolarTimes
+import com.example.ui.theme.OdiaTextSizeOption
+import com.example.ui.theme.OdiaThemePalette
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -34,7 +36,9 @@ data class OdiaCalendarUiState(
     val festivalSearchQuery: String = "",
     val selectedFestivalFilter: FestivalFilter = FestivalFilter.ALL,
     val reminders: List<CalendarReminder> = emptyList(),
-    val reminderDraft: ReminderDraft? = null
+    val reminderDraft: ReminderDraft? = null,
+    val textSizeOption: OdiaTextSizeOption = OdiaTextSizeOption.NORMAL,
+    val themePalette: OdiaThemePalette = OdiaThemePalette.VERMILION_HERITAGE
 ) {
     val selectedEntry: OdiaDayEntry?
         get() = entriesByKey[selectedDate.isoKey]
@@ -89,6 +93,7 @@ class OdiaCalendarViewModel(application: Application) : AndroidViewModel(applica
     init {
         loadCalendarData()
         observeReminders()
+        observeAppearancePreferences()
     }
 
     private fun loadCalendarData() {
@@ -120,6 +125,33 @@ class OdiaCalendarViewModel(application: Application) : AndroidViewModel(applica
             repository.remindersFlow.collect { list ->
                 _uiState.update { it.copy(reminders = list) }
             }
+        }
+    }
+
+    private fun observeAppearancePreferences() {
+        viewModelScope.launch {
+            repository.appearanceFlow.collect { prefs ->
+                _uiState.update {
+                    it.copy(
+                        textSizeOption = prefs.textSizeOption,
+                        themePalette = prefs.themePalette
+                    )
+                }
+            }
+        }
+    }
+
+    fun selectTextSize(option: OdiaTextSizeOption) {
+        _uiState.update { it.copy(textSizeOption = option) }
+        viewModelScope.launch {
+            repository.saveTextSize(option)
+        }
+    }
+
+    fun selectThemePalette(palette: OdiaThemePalette) {
+        _uiState.update { it.copy(themePalette = palette) }
+        viewModelScope.launch {
+            repository.saveThemePalette(palette)
         }
     }
 

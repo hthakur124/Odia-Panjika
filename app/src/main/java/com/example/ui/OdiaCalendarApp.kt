@@ -11,12 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.Celebration
-import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Celebration
-import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.NotificationsActive
+import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,16 +46,12 @@ import com.example.R
 import com.example.data.FestivalFilter
 import com.example.ui.components.AddReminderDialog
 import com.example.ui.components.DayDetailBottomSheet
-import com.example.ui.screens.AboutCalendarScreen
 import com.example.ui.screens.CalendarScreen
 import com.example.ui.screens.FestivalsScreen
 import com.example.ui.screens.RemindersScreen
-import com.example.ui.theme.CreamBackground
-import com.example.ui.theme.CreamSurface
-import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.SaffronContainer
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.VermilionRed
+import com.example.ui.screens.SettingsScreen
+import com.example.ui.theme.LocalOdiaColors
+import com.example.ui.theme.OdiaCalendarTheme
 
 enum class OdiaTab(
     val routeId: String,
@@ -81,11 +77,11 @@ enum class OdiaTab(
         selectedIcon = Icons.Rounded.NotificationsActive,
         unselectedIcon = Icons.Outlined.Notifications
     ),
-    ABOUT(
-        routeId = "about",
-        labelRes = R.string.nav_about,
-        selectedIcon = Icons.Rounded.Info,
-        unselectedIcon = Icons.Outlined.Info
+    SETTINGS(
+        routeId = "settings",
+        labelRes = R.string.nav_settings,
+        selectedIcon = Icons.Rounded.Settings,
+        unselectedIcon = Icons.Outlined.Settings
     )
 }
 
@@ -94,6 +90,24 @@ fun OdiaCalendarApp(
     viewModel: OdiaCalendarViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    OdiaCalendarTheme(
+        themePalette = uiState.themePalette,
+        textSizeOption = uiState.textSizeOption
+    ) {
+        OdiaCalendarScaffoldContent(
+            uiState = uiState,
+            viewModel = viewModel
+        )
+    }
+}
+
+@Composable
+private fun OdiaCalendarScaffoldContent(
+    uiState: OdiaCalendarUiState,
+    viewModel: OdiaCalendarViewModel
+) {
+    val colors = LocalOdiaColors.current
     var activeTab by rememberSaveable { mutableStateOf(OdiaTab.CALENDAR) }
 
     BackHandler(enabled = activeTab != OdiaTab.CALENDAR) {
@@ -111,7 +125,7 @@ fun OdiaCalendarApp(
         if (useNavigationRail) {
             Row(modifier = Modifier.fillMaxSize()) {
                 NavigationRail(
-                    containerColor = CreamSurface,
+                    containerColor = colors.surface,
                     modifier = Modifier.fillMaxHeight()
                 ) {
                     OdiaTab.entries.forEach { tab ->
@@ -133,11 +147,11 @@ fun OdiaCalendarApp(
                                 )
                             },
                             colors = NavigationRailItemDefaults.colors(
-                                selectedIconColor = VermilionRed,
-                                selectedTextColor = VermilionRed,
-                                indicatorColor = SaffronContainer,
-                                unselectedIconColor = InkSecondary,
-                                unselectedTextColor = InkSecondary
+                                selectedIconColor = colors.primary,
+                                selectedTextColor = colors.primary,
+                                indicatorColor = colors.accentContainer,
+                                unselectedIconColor = colors.inkSecondary,
+                                unselectedTextColor = colors.inkSecondary
                             ),
                             modifier = Modifier.testTag("nav_rail_${tab.routeId}")
                         )
@@ -155,11 +169,11 @@ fun OdiaCalendarApp(
             }
         } else {
             Scaffold(
-                containerColor = CreamBackground,
+                containerColor = colors.background,
                 contentWindowInsets = WindowInsets(0, 0, 0, 0),
                 bottomBar = {
                     NavigationBar(
-                        containerColor = CreamSurface,
+                        containerColor = colors.surface,
                         tonalElevation = 4.dp
                     ) {
                         OdiaTab.entries.forEach { tab ->
@@ -181,11 +195,11 @@ fun OdiaCalendarApp(
                                     )
                                 },
                                 colors = NavigationBarItemDefaults.colors(
-                                    selectedIconColor = VermilionRed,
-                                    selectedTextColor = VermilionRed,
-                                    indicatorColor = SaffronContainer,
-                                    unselectedIconColor = InkSecondary,
-                                    unselectedTextColor = InkSecondary
+                                    selectedIconColor = colors.primary,
+                                    selectedTextColor = colors.primary,
+                                    indicatorColor = colors.accentContainer,
+                                    unselectedIconColor = colors.inkSecondary,
+                                    unselectedTextColor = colors.inkSecondary
                                 ),
                                 modifier = Modifier.testTag("nav_bar_${tab.routeId}")
                             )
@@ -203,7 +217,6 @@ fun OdiaCalendarApp(
             }
         }
 
-        // Day Panjika Modal Bottom Sheet
         if (uiState.showDayDetailSheet) {
             DayDetailBottomSheet(
                 date = uiState.selectedDate,
@@ -223,7 +236,6 @@ fun OdiaCalendarApp(
             )
         }
 
-        // Add Reminder Modal Dialog
         uiState.reminderDraft?.let { draft ->
             AddReminderDialog(
                 date = draft.date,
@@ -251,12 +263,13 @@ private fun OdiaTabContent(
     onOpenHolidaysList: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalOdiaColors.current
     if (uiState.isLoading) {
         Box(
             modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = TempleTeal)
+            CircularProgressIndicator(color = colors.secondary)
         }
         return
     }
@@ -295,8 +308,10 @@ private fun OdiaTabContent(
             modifier = modifier
         )
 
-        OdiaTab.ABOUT -> AboutCalendarScreen(
+        OdiaTab.SETTINGS -> SettingsScreen(
             uiState = uiState,
+            onSelectTextSize = viewModel::selectTextSize,
+            onSelectThemePalette = viewModel::selectThemePalette,
             onOpenHolidaysList = onOpenHolidaysList,
             modifier = modifier
         )

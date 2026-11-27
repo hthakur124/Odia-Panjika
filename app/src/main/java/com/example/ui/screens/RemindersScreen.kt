@@ -46,19 +46,7 @@ import com.example.data.CalendarReminder
 import com.example.data.OdiaFormatting
 import com.example.ui.OdiaCalendarUiState
 import com.example.ui.components.PattachitraHeaderContainer
-import com.example.ui.theme.CreamBackground
-import com.example.ui.theme.CreamOutline
-import com.example.ui.theme.CreamSurface
-import com.example.ui.theme.InkPrimary
-import com.example.ui.theme.InkSecondary
-import com.example.ui.theme.PureWhite
-import com.example.ui.theme.SaffronContainer
-import com.example.ui.theme.SaffronDeep
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.SaffronHighlight
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.TempleTealSoft
-import com.example.ui.theme.VermilionRed
+import com.example.ui.theme.LocalOdiaColors
 
 @Composable
 fun RemindersScreen(
@@ -69,12 +57,13 @@ fun RemindersScreen(
     onDeleteReminder: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalOdiaColors.current
     val reminders = uiState.reminders
 
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(CreamBackground)
+            .background(colors.background)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             PattachitraHeaderContainer {
@@ -93,25 +82,25 @@ fun RemindersScreen(
                             Text(
                                 text = stringResource(R.string.reminders_title),
                                 style = MaterialTheme.typography.headlineMedium,
-                                color = PureWhite,
+                                color = colors.pureWhite,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 text = stringResource(R.string.reminders_subtitle),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = SaffronHighlight,
+                                color = colors.accentHighlight,
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
 
                         Surface(
                             shape = RoundedCornerShape(50),
-                            color = SaffronGold
+                            color = colors.accent
                         ) {
                             Text(
                                 text = "${OdiaFormatting.toOdiaDigits(reminders.size)} ଟି",
                                 style = MaterialTheme.typography.titleSmall,
-                                color = InkPrimary,
+                                color = colors.inkPrimary,
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
                             )
@@ -138,14 +127,14 @@ fun RemindersScreen(
                         ) {
                             Surface(
                                 shape = RoundedCornerShape(22.dp),
-                                color = TempleTealSoft,
+                                color = colors.secondarySoft,
                                 modifier = Modifier.size(84.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Rounded.NotificationsNone,
                                         contentDescription = null,
-                                        tint = TempleTeal,
+                                        tint = colors.secondary,
                                         modifier = Modifier.size(44.dp)
                                     )
                                 }
@@ -153,14 +142,14 @@ fun RemindersScreen(
                             Text(
                                 text = stringResource(R.string.empty_reminders_title),
                                 style = MaterialTheme.typography.headlineSmall,
-                                color = InkPrimary,
+                                color = colors.inkPrimary,
                                 fontWeight = FontWeight.Bold,
                                 textAlign = TextAlign.Center
                             )
                             Text(
                                 text = stringResource(R.string.empty_reminders_body),
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = InkSecondary,
+                                color = colors.inkSecondary,
                                 textAlign = TextAlign.Center
                             )
                         }
@@ -198,8 +187,8 @@ fun RemindersScreen(
 
         FloatingActionButton(
             onClick = onAddReminderClick,
-            containerColor = TempleTeal,
-            contentColor = PureWhite,
+            containerColor = colors.secondary,
+            contentColor = colors.pureWhite,
             shape = RoundedCornerShape(18.dp),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -222,15 +211,16 @@ private fun ReminderCard(
     onToggle: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     val date = reminder.date
 
     Surface(
         onClick = onCardClick,
         shape = RoundedCornerShape(20.dp),
-        color = CreamSurface,
+        color = colors.surface,
         border = BorderStroke(
             width = 1.2.dp,
-            color = if (reminder.isEnabled) TempleTeal.copy(alpha = 0.5f) else CreamOutline
+            color = if (reminder.isEnabled) colors.secondary.copy(alpha = 0.5f) else colors.outline
         ),
         shadowElevation = 2.dp,
         modifier = Modifier
@@ -247,7 +237,7 @@ private fun ReminderCard(
             if (date != null) {
                 Surface(
                     shape = RoundedCornerShape(15.dp),
-                    color = if (reminder.isEnabled) TempleTeal else CreamOutline,
+                    color = if (reminder.isEnabled) colors.secondary else colors.outline,
                     modifier = Modifier.size(width = 60.dp, height = 60.dp)
                 ) {
                     Column(
@@ -260,7 +250,7 @@ private fun ReminderCard(
                             style = MaterialTheme.typography.headlineSmall,
                             fontSize = 22.sp,
                             fontWeight = FontWeight.Bold,
-                            color = if (reminder.isEnabled) PureWhite else InkSecondary
+                            color = if (reminder.isEnabled) colors.pureWhite else colors.inkSecondary
                         )
                         Text(
                             text = OdiaFormatting.monthNameOdia(date.month),
@@ -268,7 +258,7 @@ private fun ReminderCard(
                             fontSize = 10.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
-                            color = if (reminder.isEnabled) PureWhite.copy(alpha = 0.9f) else InkSecondary
+                            color = if (reminder.isEnabled) colors.pureWhite.copy(alpha = 0.9f) else colors.inkSecondary
                         )
                     }
                 }
@@ -282,13 +272,13 @@ private fun ReminderCard(
                     text = reminder.title,
                     style = MaterialTheme.typography.titleMedium,
                     fontSize = 18.sp,
-                    color = InkPrimary,
+                    color = colors.inkPrimary,
                     fontWeight = FontWeight.Bold
                 )
 
                 Surface(
                     shape = RoundedCornerShape(8.dp),
-                    color = SaffronContainer
+                    color = colors.accentContainer
                 ) {
                     Row(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
@@ -298,13 +288,13 @@ private fun ReminderCard(
                         Icon(
                             imageVector = Icons.Rounded.NotificationsActive,
                             contentDescription = null,
-                            tint = SaffronDeep,
+                            tint = colors.accentDeep,
                             modifier = Modifier.size(14.dp)
                         )
                         Text(
                             text = OdiaFormatting.formatTime12HourOdia(reminder.hour, reminder.minute),
                             style = MaterialTheme.typography.labelMedium,
-                            color = SaffronDeep,
+                            color = colors.accentDeep,
                             fontWeight = FontWeight.Bold
                         )
                     }
@@ -314,7 +304,7 @@ private fun ReminderCard(
                     Text(
                         text = reminder.note,
                         style = MaterialTheme.typography.bodyMedium,
-                        color = InkSecondary
+                        color = colors.inkSecondary
                     )
                 }
             }
@@ -327,8 +317,8 @@ private fun ReminderCard(
                     checked = reminder.isEnabled,
                     onCheckedChange = { onToggle() },
                     colors = SwitchDefaults.colors(
-                        checkedThumbColor = PureWhite,
-                        checkedTrackColor = TempleTeal
+                        checkedThumbColor = colors.pureWhite,
+                        checkedTrackColor = colors.secondary
                     )
                 )
                 IconButton(
@@ -338,7 +328,7 @@ private fun ReminderCard(
                     Icon(
                         imageVector = Icons.Rounded.DeleteOutline,
                         contentDescription = stringResource(R.string.cd_delete_reminder),
-                        tint = VermilionRed
+                        tint = colors.holidayRed
                     )
                 }
             }

@@ -19,19 +19,13 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.ui.theme.CreamOutline
-import com.example.ui.theme.InkPrimary
-import com.example.ui.theme.SaffronGold
-import com.example.ui.theme.SaffronHighlight
-import com.example.ui.theme.TempleTeal
-import com.example.ui.theme.VermilionDark
-import com.example.ui.theme.VermilionRed
+import com.example.ui.theme.LocalOdiaColors
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Curved Maroon / Vermilion heritage header matching the reference Odia Panjika layout,
+ * Curved heritage header dynamically styled with LocalOdiaColors,
  * accented with a delicate Konark sun-wheel motif in the corner.
  */
 @Composable
@@ -39,6 +33,7 @@ fun PattachitraHeaderContainer(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.() -> Unit
 ) {
+    val colors = LocalOdiaColors.current
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -46,15 +41,14 @@ fun PattachitraHeaderContainer(
             .drawBehind {
                 drawRect(
                     brush = Brush.verticalGradient(
-                        colors = listOf(VermilionDark, VermilionRed)
+                        colors = listOf(colors.primaryDark, colors.primary)
                     )
                 )
 
-                // Subtle Konark sun-wheel decorative motif in top-right
                 val center = Offset(size.width * 0.92f, size.height * 0.25f)
                 val outerRadius = size.minDimension * 0.56f
                 val innerRadius = outerRadius * 0.34f
-                val wheelColor = SaffronHighlight.copy(alpha = 0.11f)
+                val wheelColor = colors.accentHighlight.copy(alpha = 0.12f)
 
                 drawCircle(
                     color = wheelColor,
@@ -88,28 +82,26 @@ fun PattachitraHeaderContainer(
     )
 }
 
-/**
- * Lunar badge for Purnima (Full Moon) and Amavasya (New Moon).
- */
 @Composable
 fun LunarPhaseDot(
     isPurnima: Boolean,
     size: Dp = 9.dp,
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalOdiaColors.current
     Canvas(modifier = modifier.size(size)) {
         val radius = this.size.minDimension / 2f
         if (isPurnima) {
-            drawCircle(color = SaffronGold, radius = radius)
+            drawCircle(color = colors.accent, radius = radius)
             drawCircle(
                 color = Color.White.copy(alpha = 0.75f),
                 radius = radius * 0.45f,
                 center = Offset(center.x - radius * 0.2f, center.y - radius * 0.2f)
             )
         } else {
-            drawCircle(color = InkPrimary, radius = radius)
+            drawCircle(color = colors.inkPrimary, radius = radius)
             drawCircle(
-                color = SaffronGold.copy(alpha = 0.9f),
+                color = colors.accent.copy(alpha = 0.9f),
                 radius = radius - 0.8.dp.toPx(),
                 style = Stroke(width = 1.dp.toPx())
             )
@@ -117,13 +109,11 @@ fun LunarPhaseDot(
     }
 }
 
-/**
- * Golden solar horizon arc rendered inside the Sunrise/Sunset detail card.
- */
 @Composable
 fun SolarHorizonArc(
     modifier: Modifier = Modifier
 ) {
+    val colors = LocalOdiaColors.current
     Canvas(
         modifier = modifier
             .fillMaxWidth()
@@ -135,7 +125,7 @@ fun SolarHorizonArc(
         val arcHeight = (size.height - 14.dp.toPx()) * 2f
 
         drawLine(
-            color = CreamOutline,
+            color = colors.outline,
             start = Offset(paddingX - 6.dp.toPx(), horizonY),
             end = Offset(size.width - paddingX + 6.dp.toPx(), horizonY),
             strokeWidth = 1.4.dp.toPx(),
@@ -144,7 +134,7 @@ fun SolarHorizonArc(
 
         drawArc(
             brush = Brush.horizontalGradient(
-                colors = listOf(SaffronGold, VermilionRed, TempleTeal)
+                colors = listOf(colors.accent, colors.primary, colors.secondary)
             ),
             startAngle = 180f,
             sweepAngle = 180f,
@@ -155,17 +145,17 @@ fun SolarHorizonArc(
         )
 
         drawCircle(
-            color = SaffronGold,
+            color = colors.accent,
             radius = 5.5.dp.toPx(),
             center = Offset(paddingX, horizonY)
         )
         drawCircle(
-            color = SaffronHighlight,
+            color = colors.accentHighlight,
             radius = 4.dp.toPx(),
             center = Offset(size.width / 2f, horizonY - arcHeight / 2f)
         )
         drawCircle(
-            color = VermilionRed,
+            color = colors.primary,
             radius = 5.5.dp.toPx(),
             center = Offset(size.width - paddingX, horizonY)
         )

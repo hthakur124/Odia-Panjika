@@ -160,3 +160,24 @@ enum class FestivalFilter {
     EKADASHI,
     SANKRANTI
 }
+
+enum class OdiaTextSizeOption(val scaleFactor: Float) {
+    NORMAL(1.0f),
+    LARGE(1.14f),
+    EXTRA_LARGE(1.28f)
+}
+
+enum class OdiaThemePalette(
+    val displayNameOdia: String,
+    val displayNameEnglish: String
+) {
+    VERMILION_HERITAGE("ସିନ୍ଦୂର ଲାଲ୍", "Sindoor Red"),
+    TEMPLE_TEAL("ମନ୍ଦିର ସବୁଜ", "Temple Teal"),
+    SAFFRON_SUN("ଗେରୁଆ ସୂର୍ଯ୍ୟ", "Saffron Sun"),
+    ROYAL_INDIGO("ସମ୍ବଲପୁରୀ ନୀଳ", "Royal Indigo")
+}
+
+data class UserDisplaySettings(
+    val textSizeOption: OdiaTextSizeOption = OdiaTextSizeOption.NORMAL,
+    val themePalette: OdiaThemePalette = OdiaThemePalette.VERMILION_HERITAGE
+)
