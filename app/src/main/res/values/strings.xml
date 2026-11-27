@@ -1,0 +1,91 @@
+<resources>
+    <string name="app_name">Odia Panjika</string>
+    <string name="app_title_odia">ଓଡ଼ିଆ ପଞ୍ଜିକା</string>
+
+    <!-- Navigation -->
+    <string name="nav_calendar">କ୍ୟାଲେଣ୍ଡର</string>
+    <string name="nav_festivals">ପର୍ବପର୍ବାଣୀ</string>
+    <string name="nav_reminders">ରିମାଇଣ୍ଡର</string>
+    <string name="nav_settings">ସେଟିଂସ୍</string>
+
+    <!-- Settings & About Calendar -->
+    <string name="settings_title">ସେଟିଂସ୍</string>
+    <string name="settings_subtitle">ଅକ୍ଷର, ରଙ୍ଗ ଓ ପଞ୍ଜିକା ବିଷୟରେ</string>
+    <string name="settings_text_size_title">ଅକ୍ଷର ଆକାର (Text Size)</string>
+    <string name="settings_text_normal">ସାଧାରଣ</string>
+    <string name="settings_text_large">ବଡ଼</string>
+    <string name="settings_text_extra_large">ଅତି ବଡ଼</string>
+    <string name="settings_theme_color_title">ରଙ୍ଗ ପରିବର୍ତ୍ତନ (Theme Color)</string>
+    <string name="settings_about_card_title">ଓଡ଼ିଆ ପଞ୍ଜିକା ବିଷୟରେ</string>
+    <string name="settings_about_card_subtitle">ଓଡ଼ିଶା, ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା ଓ ଛୁଟିଦିନ</string>
+    <string name="settings_contact_title">ଯୋଗାଯୋଗ (Contact Us)</string>
+    <string name="settings_contact_email">odiaechoes@gmail.com</string>
+    <string name="btn_send_email">ଇମେଲ୍ ପଠାନ୍ତୁ</string>
+    <string name="btn_copy_email">କପି କରନ୍ତୁ</string>
+    <string name="email_copied_feedback">ଇମେଲ୍ କପି ହେଲା: odiaechoes@gmail.com</string>
+    <string name="cd_navigate_back">Go back</string>
+
+    <string name="about_title">ଓଡ଼ିଆ ପଞ୍ଜିକା ବିଷୟରେ</string>
+    <string name="about_subtitle">ଓଡ଼ିଶା ଓ ଶ୍ରୀଜଗନ୍ନାଥ ପରମ୍ପରା</string>
+    <string name="btn_view_all_holidays">ସବୁ ଛୁଟିଦିନ ଦେଖନ୍ତୁ</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_previous_month">Previous month</string>
+    <string name="cd_next_month">Next month</string>
+    <string name="cd_close_sheet">Close details</string>
+    <string name="cd_previous_day">Previous day</string>
+    <string name="cd_next_day">Next day</string>
+    <string name="cd_clear_search">Clear search</string>
+    <string name="cd_add_reminder">Add reminder</string>
+    <string name="cd_delete_reminder">Delete reminder</string>
+
+    <!-- Calendar labels -->
+    <string name="legend_sunday">ରବିବାର</string>
+    <string name="legend_holiday">ଛୁଟି</string>
+    <string name="legend_festival">ପର୍ବ</string>
+    <string name="legend_reminder">ରିମାଇଣ୍ଡର</string>
+
+    <string name="section_upcoming_festivals">ଆଗାମୀ ପର୍ବ</string>
+    <string name="empty_month_festivals">ଏହି ମାସରେ କୌଣସି ପ୍ରମୁଖ ପର୍ବ ନାହିଁ</string>
+
+    <!-- Day detail sheet -->
+    <string name="label_tithi">ତିଥି • Tithi</string>
+    <string name="label_nakshatra">ନକ୍ଷତ୍ର • Nakshatra</string>
+    <string name="label_rashi">ରାଶି • Rashi</string>
+    <string name="label_sunrise">ସୂର୍ଯ୍ୟୋଦୟ</string>
+    <string name="label_sunset">ସୂର୍ଯ୍ୟାସ୍ତ</string>
+    <string name="label_solar_location">ଭୁବନେଶ୍ୱର / ପୁରୀ, ଓଡ଼ିଶା</string>
+    <string name="label_festival">ପର୍ବ / ଉତ୍ସବ</string>
+    <string name="label_shubha_din">ଶୁଭ ଦିନ</string>
+    <string name="label_holiday_badge">ଛୁଟି ଦିନ</string>
+
+    <!-- Festivals tab -->
+    <string name="festivals_title">ପର୍ବପର୍ବାଣୀ ଓ ଛୁଟି</string>
+    <string name="festivals_subtitle">୨୦୨୭ ଓଡ଼ିଆ ପଞ୍ଜିକା</string>
+    <string name="search_festivals_placeholder">ପର୍ବ, ତିଥି କିମ୍ବା ମାସ ଖୋଜନ୍ତୁ...</string>
+    <string name="filter_all">ସବୁ</string>
+    <string name="filter_holidays">ଛୁଟି</string>
+    <string name="filter_purnima">ପୂର୍ଣ୍ଣିମା</string>
+    <string name="filter_amavasya">ଅମାବାସ୍ୟା</string>
+    <string name="filter_ekadashi">ଏକାଦଶୀ</string>
+    <string name="filter_sankranti">ସଂକ୍ରାନ୍ତି</string>
+    <string name="empty_festivals_search">କୌଣସି ପର୍ବ ମିଳିଲା ନାହିଁ</string>
+
+    <!-- Reminders tab & dialog -->
+    <string name="reminders_title">ମୋ ରିମାଇଣ୍ଡର</string>
+    <string name="reminders_subtitle">ପର୍ବ ଓ ବିଶେଷ ଦିନ ପାଇଁ ସ୍ମାରକ</string>
+    <string name="btn_add_reminder">ରିମାଇଣ୍ଡର ଯୋଡ଼ନ୍ତୁ</string>
+    <string name="btn_save_reminder">ସେଭ୍ କରନ୍ତୁ</string>
+    <string name="btn_cancel">ବାତିଲ୍</string>
+    <string name="reminder_title_label">ରିମାଇଣ୍ଡର ଶୀର୍ଷକ (Title)</string>
+    <string name="reminder_title_placeholder">ଯଥା: ମକର ସଂକ୍ରାନ୍ତି ପୂଜା</string>
+    <string name="reminder_note_label">ଟିପ୍ପଣୀ (Optional Note)</string>
+    <string name="reminder_note_placeholder">ବିଶେଷ କାମ କିମ୍ବା ପୂଜା ବିବରଣୀ...</string>
+    <string name="reminder_time_label">ସମୟ ବାଛନ୍ତୁ (Time)</string>
+    <string name="reminder_morning">ସକାଳ ୦୭:୦୦</string>
+    <string name="reminder_noon">ମଧ୍ୟାହ୍ନ ୧୨:୦୦</string>
+    <string name="reminder_evening">ସନ୍ଧ୍ୟା ୦୬:୦୦</string>
+    <string name="empty_reminders_title">କୌଣସି ରିମାଇଣ୍ଡର ନାହିଁ</string>
+    <string name="empty_reminders_body">କୌଣସି ତାରିଖ କିମ୍ବା ପର୍ବ ଉପରେ ଟାପ୍ କରି ରିମାଇଣ୍ଡର ଯୋଡ଼ନ୍ତୁ।</string>
+    <string name="day_reminders_heading">ଏହି ଦିନର ରିମାଇଣ୍ଡର</string>
+</resources>

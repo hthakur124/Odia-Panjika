@@ -1,0 +1,6 @@
+{
+  "name": "Odia Panjika",
+  "description": "A vibrant Odia calendar and panjika app featuring Odia numerals, festival highlights, daily tithi, nakshatra, rashi, sunrise/sunset, shubha din, and Google Sheet sync.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
